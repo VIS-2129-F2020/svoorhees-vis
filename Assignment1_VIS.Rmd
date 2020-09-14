@@ -1,0 +1,177 @@
+---
+title: "Assigment 1_VIS"
+author: "Sage Grey"
+date: "9/12/2020"
+output: html_document
+---
+
+## Process
+
+### Loading Libraries
+```{r, message = FALSE}
+library(ggplot2)
+library(tidycensus)
+library(tidyverse)
+```
+
+
+## Variables  Used
+To answer the above question I have chosen to look at census track data using the ACS-1 Year Summary because it provides more direct information about construction. 
+
+1. Household Income || **HINCP** || Categorical
+2. When Structure was First Built || **YBL**  || Categorical 
+3. Majority Race || **RAC1P** || Categorical
+4. First Mortgage Payment || **MRGP** || Continuous 
+5. Monthly Rent|| **RNTP** || Continuous
+6. Travel Time To Work || **JWMNP** || Continuous
+7. Location (PUMA) || **PUMA**|| Categorical
+8. Number of Persons in Household || **NP**|| Continuous
+9. Property Value || **VALP** || Continuous
+10. Age Person || **AGEP** || Continuous
+
+### Choosing Variables & Creating DataSet
+```{r}
+ass1_vis_vars <-  get_pums(variables = c("YBL", 
+                                          "HINCP",
+                                          "RAC1P", 
+                                          "JWMNP",
+                                          "MRGP",
+                                          "RNTP",
+                                          "NP", 
+                                          "PUMA", 
+                                         "VALP", 
+                                         "AGEP"),
+                state= "NM",
+                year =2018,
+                survey ="acs1",
+                recode=TRUE) %>%
+  
+                #Albuquerque PUMAS Only
+                mutate(PUMA = as.numeric(PUMA))%>%
+               filter(PUMA == 00803, VALP < 2000000)%>%
+  
+  
+    
+mutate(struct_old = (YBL_label == "1939 or earlier" |
+                       YBL_label == "1940 to 1949" | 
+                       YBL_label == "1950 to 1959" | 
+                       YBL_label == "1960 to 1969" )) %>%
+  
+mutate(struct_last_twenty = (YBL_label == "2008" |
+                               YBL_label == "2009" |
+                               YBL_label == "2010" |
+                               YBL_label == "2011" |
+                               YBL_label == "2012" |
+                               YBL_label == "2013" |
+                               YBL_label == "2014" |
+                               YBL_label == "2015" |
+                               YBL_label == "2016" |
+                               YBL_label == "2017" |
+                               YBL_label == "2018" )) %>%
+  
+mutate(name_of_puma = case_when(
+  PUMA == "801" ~ "Far Northeast Heights",
+  PUMA == "802" ~ "Near Northeast Heights", 
+  PUMA == "803" ~ "Southeast Heights",
+  PUMA == "804" ~ "Central Abq & North Valley",
+  PUMA == "805" ~ "Northwes Mesa, Paradise Hills, Navajo Nation -Tohajiilee Chapter",
+  PUMA == "806"~ "Southwest Mesa & South Valley")) %>%
+
+select(YBL_label, struct_old, struct_last_twenty, HINCP ,RAC1P_label, JWMNP, MRGP, RNTP, NP, PUMA, name_of_puma, VALP, AGEP)
+
+```
+
+##GGPlot 1
+```{r}
+options(scipen=999)
+ggplot(ass1_vis_vars, aes(x= VALP, y=HINCP, color = RAC1P_label, fill=RAC1P_label )) +
+geom_point(alpha=.5) +
+  scale_y_continuous(name= "Income (Thousands)",
+                     breaks = seq(0,400000, by = 50000),
+                     labels = paste(seq(0,400, by = 50),
+                     "", sep = "")) +
+  scale_x_continuous(name ="Property Values",
+                     breaks = seq(20000, 900000, by= 50000),
+                     labels = paste(seq(20, 900, by= 50),
+                                    "k", sep ="")) +
+  scale_color_discrete( name = "Race") + 
+  scale_fill_discrete(name ="Race") +
+  stat_smooth(method = "lm") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90))
+```
+**Why would I make this graph:** There is an interesting phenomenon demonstrated in this chart that income is much more directly correlated to property values for Asian and White homeowners than it is for Black or Mixed Race individuals. 
+
+
+##GGPLOT 2
+```{r}
+ggplot(ass1_vis_vars, aes(NP, RAC1P_label)) +
+       geom_point(position = "jitter", size =.25, alpha =.5) + 
+      scale_y_discrete(name = "") +
+      scale_x_continuous(name = "Number of people in Household, Southeast Heights",
+                                 breaks= seq(1,9, by = 1),
+                                labels = paste(seq(1,9, by = 1), "", sep= ""))
+``` 
+**Why would I make this graph:** Gives a good sense of both the racial breakdown in the area, as well as indicating some information about common household structure. 
+
+##GPLOT 3
+```{r}
+ggplot(ass1_vis_vars,aes(x=AGEP, y=JWMNP)) +
+  geom_point(size=3) + 
+  geom_segment(aes(x=AGEP, 
+                   xend=AGEP, 
+                   y=0, 
+                   yend=JWMNP)) + 
+  labs(title="Lollipop Chart", 
+       subtitle="Commute Time Versus Age", 
+       caption="source: ACS1") + 
+  scale_y_continuous(name="Commute Time in Minutes") +
+  scale_x_continuous(name="Age of Individual")
+  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+
+
+```
+
+##GGPLOT 4
+Question: How WOuld I combine all other races other than White ALone?
+```{r}
+ggplot(ass1_vis_vars,aes(x=RAC1P_label, fill=struct_last_twenty )) +
+  geom_bar() +
+  scale_x_discrete(name="") +
+  scale_fill_discrete(name="House Built in the Last Twenty Years")+
+  theme(axis.text.x = element_text(angle = 90))
+
+```
+
+##GGPlot 5 
+```{r}
+g <- ggplot(ass1_vis_vars, aes(YBL_label)) 
+g + geom_density(aes(fill=factor(struct_old)), alpha=0.8) + 
+    labs(title="Density plot", 
+         subtitle="Some Variables by Other Variables",
+         caption="Source: mpg",
+         x="Date House Constructed",
+         fill="House is older than 70 years") +
+  theme(axis.text.x = element_text(90)) +
+  theme_bw()
+```
+
+##Variables (For Reference)
+```{r}
+#Person Level
+person_vars_2018 <- pums_variables %>%
+  distinct(year, survey, var_code, var_label, data_type, level) %>%
+  filter(level=="person", year==2018, survey=="acs1")
+
+#HouseHold Level
+hh_vars_2018 <- pums_variables %>%
+  distinct(year, survey, var_code, var_label, data_type, level)%>%
+  filter(level=="housing", year==2018, survey=="acs1")
+
+
+
+
+```
+
+##
+Questions, what is the gray area around a smooth line exactly. 
