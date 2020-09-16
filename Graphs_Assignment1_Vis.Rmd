@@ -1,0 +1,364 @@
+
+---
+title: "Assigment 1_VIS"
+author: "Sage Grey"
+date: "9/12/2020"
+output: html_document
+html_document:
+    theme: cosmo
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+**Loading Libraries**
+```{r, message = FALSE, results='hide'}
+library(ggplot2)
+library(tidycensus)
+library(tidyverse)
+
+
+library(wesanderson)
+library(ggthemes)
+```
+
+
+## Overview
+Hello! 
+Below are 10 graphs I generated using American Community Survey Data from 2018 for a Neighborhood (Single PUMA) in Albuquerque, NM.
+
+**Variables Used**
+1. Household Income || **HINCP** || Categorical <br/>
+2. When Structure was First Built || **YBL**  || Categorical <br/>
+3. Majority Race || **RAC1P** || Categorical <br/>
+4. First Mortgage Payment || **MRGP** || Continuous  <br/>
+5. Monthly Rent|| **RNTP** || Continuous <br/>
+6. Travel Time To Work || **JWMNP** || Continuous <br/>
+7. Location (PUMA) || **PUMA**|| Categorical <br/>
+8. Number of Persons in Household || **NP**|| Continuous <br/>
+9. Property Value || **VALP** || Continuous <br/>
+10. Age Person || **AGEP** || Continuous <br/>
+
+**Variables Created**
+1. Development || **development**|| Categorical <br/>
+2. Old Structures || **struct_old**|| Categorical <br/>
+3. Structures Built in last twenty years || **struct_last_twenty** || Categorical <br/>
+
+
+## Choosing Variables & Creating DataSet
+```{r, message = FALSE, results='hide'}
+ass1_vis_vars <-  get_pums(variables = c("YBL", 
+                                          "HINCP",
+                                          "RAC1P", 
+                                          "JWMNP",
+                                          "MRGP",
+                                          "RNTP",
+                                          "NP", 
+                                          "PUMA", 
+                                         "VALP", 
+                                         "AGEP",
+                                         "HISP"),
+                state= "NM",
+                year =2018,
+                survey ="acs1",
+                recode=TRUE) %>%
+  
+                #Albuquerque PUMAS Only
+                mutate(PUMA = as.numeric(PUMA))%>%
+               filter(PUMA == 00803,VALP < 2000000)%>%
+                filter(YBL_label != "1939 or earlier")%>%
+  
+mutate(development = case_when(YBL_label == "1939 or earlier" ~ "pre 1940", 
+                        YBL_label == "1940 to 1949" ~ "1940s",
+                        YBL_label == "1950 to 1959" ~ "1950s",
+                        YBL_label == "1960 to 1969" ~ "1960s",
+                        YBL_label == "1970 to 1979" ~ "1970s",
+                        YBL_label == "1980 to 1989" ~ "1980s",
+                        YBL_label == "1990 to 1999" ~ "1990s",
+                        YBL_label == "2000 to 2004" ~ "2000s",
+                        YBL_label == "2005"~ "2000s" ,
+                        YBL_label == "2006"~ "2000s" ,
+                        YBL_label == "2007"~ "2000s" ,
+                        YBL_label == "2008"~ "2000s" ,
+                        YBL_label == "2009"~ "2000s" ,
+                               YBL_label == "2010" ~ "2010s",
+                               YBL_label == "2011" ~ "2010s",
+                               YBL_label == "2012" ~ "2010s",
+                               YBL_label == "2013" ~ "2010s",
+                               YBL_label == "2014" ~ "2010s",
+                               YBL_label == "2015" ~ "2010s",
+                               YBL_label == "2016" ~ "2010s",
+                               YBL_label == "2017" ~ "2010s",
+                               YBL_label == "2018" ~ "2010s")) %>%
+    
+mutate(struct_old = (YBL_label == "1939 or earlier" |
+                       YBL_label == "1940 to 1949" | 
+                       YBL_label == "1950 to 1959" | 
+                       YBL_label == "1960 to 1969" )) %>%
+  
+mutate(struct_last_twenty = (YBL_label == "2008" |
+                               YBL_label == "2009" |
+                               YBL_label == "2010" |
+                               YBL_label == "2011" |
+                               YBL_label == "2012" |
+                               YBL_label == "2013" |
+                               YBL_label == "2014" |
+                               YBL_label == "2015" |
+                               YBL_label == "2016" |
+                               YBL_label == "2017" |
+                               YBL_label == "2018" )) %>%
+  
+mutate(name_of_puma = case_when(
+  PUMA == "801" ~ "Far Northeast Heights",
+  PUMA == "802" ~ "Near Northeast Heights", 
+  PUMA == "803" ~ "Southeast Heights",
+  PUMA == "804" ~ "Central Abq & North Valley",
+  PUMA == "805" ~ "Northwes Mesa, Paradise Hills, Navajo Nation -Tohajiilee Chapter",
+  PUMA == "806"~ "Southwest Mesa & South Valley")) %>%
+
+select( struct_old, struct_last_twenty, HINCP ,RAC1P_label, JWMNP, MRGP, RNTP, NP, PUMA, name_of_puma, VALP, AGEP, development, HISP)
+```
+
+## GGPlot 1
+```{r, message = FALSE, results='hide'}
+options(scipen=999)
+ggplot(ass1_vis_vars, aes(x= VALP, y=HINCP, color = RAC1P_label, fill=RAC1P_label )) +
+geom_point(alpha=.5) +
+  labs(title="Income and Propery Values", 
+         subtitle="How doed PV to Income differ along racial demographics",
+         caption="Source: ACS1 2018",
+         x="Household Income",
+         fill="Racee")  +
+  scale_y_continuous(name= "Income (Thousands)",
+                     breaks = seq(0,400000, by = 50000),
+                     labels = paste(seq(0,400, by = 50),
+                     "", sep = "")) +
+  scale_x_continuous(name ="Property Values",
+                     breaks = seq(20000, 900000, by= 50000),
+                     labels = paste(seq(20, 900, by= 50),
+                                    "k", sep ="")) +
+  scale_color_discrete( name = "Race") + 
+  scale_fill_discrete(name ="Race") +
+  stat_smooth(method = "lm") +
+  theme_tufte()+
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+
+**Why would I make this graph:** There is an interesting phenomenon appearing in this chart that income is much more directly correlated to property values for Asian and White homeowners than it is for Black or Mixed Race individuals. After calculating this, I wanted to know how representative my dataset was by getting a better sense of the demographic breakdown in the area. Which led me to the next chart.   
+
+
+## GGPLOT 2
+```{r, message = FALSE, results='hide'}
+ggplot(ass1_vis_vars, aes(NP, RAC1P_label)) +
+       geom_point(position = "jitter", size =.25, alpha =.5) + 
+      scale_y_discrete(name = "") +
+      scale_x_continuous(name = "Number of people in Household, Southeast Heights",
+                                 breaks= seq(1,9, by = 1),
+                                labels = paste(seq(1,9, by = 1), "", sep= "")) +
+  theme_fivethirtyeight()
+``` 
+
+
+**Why would I make this graph:** Gives a good sense of both the racial breakdown in the area, as well as indicating some information about common household structure. 
+
+## GPLOT 3
+```{r, message = FALSE, results='hide'}
+ggplot(ass1_vis_vars,aes(x=AGEP, y=JWMNP)) +
+  geom_point(size=3,alpha=.7) + 
+  geom_segment(aes(x=AGEP, 
+                   xend=AGEP, 
+                   y=0, 
+                   yend=JWMNP)) + 
+  labs(title="Whats Your Drive?", 
+       subtitle="Commute Time Versus Age", 
+       caption="source: ACS1") + 
+  scale_y_continuous(name="Commute Time in Minutes") +
+  scale_x_continuous(name="Age of Individual")
+  theme(axis.text.x = element_text(angle=65, vjust=0.6)) +
+    theme_fivethirtyeight()
+
+
+```
+This graph made me think of the "productive window" of time a person spends working. Very few data points past 75. Also people frequently seem to round their commute time. Makes me think that I would want to make this into a categorical variable. 
+
+
+## GGPLOT 4
+```{r, message = FALSE, results='hide'}
+ggplot(ass1_vis_vars,aes(x=RAC1P_label, fill=struct_last_twenty )) +
+  geom_bar() +
+  scale_x_discrete(name="") +
+  scale_fill_discrete(name="House Built in the Last Twenty Years")+
+  theme(axis.text.x = element_text(angle = 90))
+
+```
+Not sure if this data is hiding information due to the skew of white alone. 
+
+## GGPlot 5 
+```{r, message = FALSE, results='hide'}
+g <- ggplot(ass1_vis_vars, aes(HINCP)) 
+g + geom_density(aes(fill=factor(development)), alpha=0.8) + 
+    labs(title="Race and Home Development", 
+         subtitle="Decade Home was Built and income",
+         caption="Source: ACS1 2018",
+         x="Household Income",
+         fill="Construction Decade") +
+  scale_x_continuous(breaks = seq(0,400000, by = 50000),
+                     labels = paste(seq(0,400, by = 50),
+                     "k", sep = "")) 
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme_classic()
+```
+Im still trying to figure out what this one means, but I feel that it could be useful someday. 
+
+
+## GGplot 6
+```{r, message = FALSE, results='hide'}
+ggplot(ass1_vis_vars, aes(x=HINCP, y=development)) +
+  geom_point(size=5, alpha=.25) +
+  scale_x_continuous("Household Income",
+                      breaks = seq(0,400000, by = 50000),
+                     labels = paste(seq(0,400, by = 50),
+                     "k", sep = "")) + 
+  scale_y_discrete(name="Decade Home was Constructed") + 
+  theme_classic()
+```
+SO I thought this map was interesting, in that many of the highest income earners were in 1950s houses. My next thought was thinking about my first graph that revealed different correlations to income/property values along race. So for my next graph, I wanted to bring that variable in as well. 
+
+## GGPLOT 7 
+```{r, message = FALSE, results='hide'}
+ggplot(ass1_vis_vars, aes(x=HINCP, y=development, color=RAC1P_label)) +
+  geom_point(size=5, alpha=.25) +
+  scale_x_continuous("Household Income",
+                      breaks = seq(0,400000, by = 50000),
+                     labels = paste(seq(0,400, by = 50),
+                     "k", sep = "")) + 
+  scale_y_discrete(name="Decade Home was Constructed") + 
+  theme_classic()
+
+```
+Interesting! Not entirely sure it is worth the lack of visual clarity, if developing further, I would categorize into white/non-white.  
+
+## GGPlot 8
+```{r, message = FALSE, results='hide'}
+g <- ggplot(ass1_vis_vars, aes(x=development, y=NP))
+g + geom_violin() + 
+  labs(title="House: Deccade Built and Number of People In It", 
+       subtitle="Were the 80s for large families?",
+       caption="Source: ACS1 2018",
+       x="Decade Home Constructed",
+       y="Number of People In Household") +
+theme_fivethirtyeight()
+```
+After making this, I was really excited to see if this would be a BETTER way of expressing the data in plots 6 & 7. 
+
+
+## GGPlot 9
+```{r, message = FALSE, results='hide'}
+g <- ggplot(ass1_vis_vars, aes(x=development, y=HINCP))
+g + geom_violin(siez=8) + 
+  labs(title="Decade Constructed and Income of Inhabitants", 
+       subtitle="Rich? Move into a 1950s home?",
+       caption="Source: ACS1 2018",
+       x="Decade Home Constructed",
+       y="Household Income") +
+  scale_y_continuous(breaks = seq(0,400000, by = 50000),
+                     labels = paste(seq(0,400, by = 50),
+                     "k", sep = "")) +
+  theme_economist_white()
+```
+DEFINITELY an improvement! 
+
+## GGPlot 10
+```{r}
+
+
+ggplot(ass1_vis_vars, aes(x=NP, y=JWMNP)) + 
+  geom_point(col="tomato2", size=3, alpha=.4) +  
+  geom_segment(aes(x=NP, 
+                   xend=NP, 
+                   y=min(JWMNP), 
+                   yend=max(JWMNP)), 
+               linetype="dashed", 
+               size=0.1) + 
+  labs(title="Do your roomates make you late?", 
+       subtitle="Housemates v Commute", 
+       caption="source: ACS1 2018") +  
+  scale_x_discrete(name="Number of Housemates") +
+  scale_y_continuous(name="Minutes in Daily Commute") +
+  coord_flip()
+
+```
+
+## GGPlot 11 --> you promised we could have a **truly** terrible one! 
+```{r}
+ggplot(ass1_vis_vars, aes(x=NP, y=MRGP)) +
+  geom_line(color="green")
+```
+
+## R Cheat Sheet, References & Troubleshooting
+Hello! I see this area of my assignment as predominantly a resource for myself as I learn R and as a resource to R if I ever need to return after a hiatus (and have forgotten everything I know). 
+
+Feel free to look through, but there is no need to grade anything in this section. 
+
+
+**Troubleshooting Checklist** <br/>
+0. Breathe. <br/>
+1. Is everything spelled/cApiTAlized correctly? <br/>
+2. Count your parentheses(), commas, and "quotes" <br/>
+    2.1 Check poles %>%, | <br/>
+3. Have you run the R chunks that are before the chunk with your error. <br/>
+5. What is the last thing you changed? Did you make sure you changed it in ALL the places it needs to be changed?<br/>
+6. Breathe. Maybe get a glass of water.  <br/>
+7. Type in the ?function() into the Console <br/>
+8. Do a Google search for "R Markdown" + Your Problem <br/>
+9. Try copying and pasting sections in another R Chunk --> Isolate the Problem <br/>
+10. Phone a friend. <br/>
+
+**Common Errors:** <br/>
+-If you are having a function not found error, check whether or not you have run your libraries. <br/>
+-YAML error, check the very beginning of your code
+- 
+
+### References
+
+**For General R**
+R is for Data Science
+https://r4ds.had.co.nz/index.html
+
+Data Wrangling Cheat Sheet
+https://rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+
+*For GGPLOT**
+Top 50 Graph Types
+http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#Violin%20Plot
+
+GGplot Cheat Sheet
+https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+
+Color Pallets
+https://www.datanovia.com/en/blog/ggplot-colors-best-tricks-you-will-love/#predefined-ggplot-color-palettes
+
+
+Look into Wes Anderson Themes, WSJ, Economist
+
+
+
+##Variables (For Reference)
+```{r}
+#Person Level
+person_vars_2018 <- pums_variables %>%
+  distinct(year, survey, var_code, var_label, data_type, level) %>%
+  filter(level=="person", year==2018, survey=="acs1")
+
+#HouseHold Level
+hh_vars_2018 <- pums_variables %>%
+  distinct(year, survey, var_code, var_label, data_type, level)%>%
+  filter(level=="housing", year==2018, survey=="acs1")
+
+
+
+
+```
+
