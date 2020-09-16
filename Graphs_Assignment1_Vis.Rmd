@@ -1,14 +1,16 @@
 
 ---
-title: "Assigment 1_VIS"
+html_document:
+  theme: cosmo
+  toc: yes
+  toc_depth: 3
+  toc_float: yes
 author: "Sage Grey"
 date: "9/12/2020"
-output: html_document
-html_document:
-    theme: cosmo
-    toc: true
-    toc_depth: 3
-    toc_float: true
+output:
+  pdf_document: default
+  html_document: default
+title: "Assigment 1_VIS"
 ---
 
 **Loading Libraries**
@@ -16,6 +18,7 @@ html_document:
 library(ggplot2)
 library(tidycensus)
 library(tidyverse)
+library(tinytex)
 
 
 library(wesanderson)
