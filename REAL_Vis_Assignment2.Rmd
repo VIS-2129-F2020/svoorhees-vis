@@ -1,0 +1,353 @@
+---
+title: "Assignment 2: VIS"
+Date: 9/18/2020
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    theme: cosmo
+---
+
+
+## **Overview of Assignment**
+
+The goal of this assignment is to familiarize ourselves with mapping in R and working with projections/distortions. 
+Assignment is to show a map of a large geogaphic area with 3 seperate map projections. Identify a variable, and show at least three different methods. 
+
+An additional tutorial for map projections is: https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html
+
+## Note for Grader
+1. I had a truly terrible RStudio problem that gobbled a lot of my time this week. I finally worked with Carole and was able to figure out some workarounds. With a lot of time lost to that, this assignment is less flushed out/polished than I would like it to be. I have left questions at various points throughout the code and at areas that I was not able to successfully run. If the answers are simple, you can answer them, otherwise I will come to office hours and ask them there. (The notes are mostly there to help me remember my questions). 
+
+2. Part of my R Studio problem is that I can't seem to Knit files. I'm going to try to uninstall and reinstall RStudio and R tomorrow. But if things look awful, It's because I couldnt knit to test aesthetics. 
+
+
+### Housekeeping & loadign Libraries
+```{r, message = FALSE, results='hide'}
+
+#**Question for Grader**: When do I need to load a library, and when do I just need to load a package? Am I loading more libraries than necessary? 
+
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(tidyverse)
+library(ggspatial)
+library(cartogram)
+library(ggthemes)
+library(rnaturalearthhires)
+library(cartogram)
+library(gridExtra)
+
+
+# Load Covid Data
+covid_data <-read_csv("owid-covid-data.csv") %>% 
+  filter(date == "9/20/2020")
+```
+
+## **Map Projections of African Continent**
+
+### Setting Map Projections
+```{r, message = FALSE, results='hide'}
+
+#Bonne (North Africa Bonne)
+bonne_north_africa <- "+proj=bonne +lon_0=2.337208 +lat_1=35.1 +x_0=0 +y_0=0 +a=6378249.2 +b=6356514.999904194 +units=m +no_defs "
+
+#Albers Equal Area - Africa
+albers_africa <-"+proj=aea +lat_1=36.5 +lat_2=29.071428571429 +lat_0=32.7857142857145 +lon_0=-14.111111111111 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+
+#Africa Equidistant Conic
+equi_conic <- "+proj=eqdc +lat_0=0 +lon_0=0 +lat_1=20 +lat_2=-23 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs "
+
+```
+
+### Drawing Map of Africa
+```{r, message = FALSE, results='hide'}
+
+#In case I want it later, creating world map first
+world <- ne_countries(scale =50, returnclass ="sf")
+
+# Create a variable for just African countries
+map_africa <- world %>%
+  filter(continent == "Africa")
+
+#Plot it
+af_map <- ggplot(map_africa) +
+  geom_sf() +
+  theme_wsj()
+af_map
+    
+```
+
+### North Africa Bonne Projection
+
+```{r, message = FALSE, results='hide'}
+ggplot(map_africa) +
+  geom_sf() +
+  coord_sf(crs= bonne_north_africa) +
+  theme_bw() 
+
+
+```
+
+#### ALbers Equal Area
+
+```{r, message = FALSE, results='hide'}
+ggplot(map_africa) +
+  geom_sf() +
+  coord_sf(crs= albers_africa) +
+  theme_bw()
+```
+### Albers Equal Area and North Africa Bonne Compared
+
+#```{r}
+nab_africa <- ggplot(map_africa) +
+  geom_sf() +
+  coord_sf(crs= bonne_north_africa) +
+  theme_bw() +
+  coord_fixed(1.3)
+
+aea_africa <- ggplot(map_africa) +
+  geom_sf() +
+  coord_sf(crs= albers_africa) +
+  theme_bw() +
+  coord_fixed(1.3)
+
+#**Question for Grader**: I wanted to try to put the maps side by side. The two methods below were on Stack Overflow, but I couldn't get either of them to work. The grid.arrange seemed like the most obvious, but I was getting the error " Error: geom_sf() must be used with coord_sf()." In other instances when I used this code, I used st_transform(). But I'm not sure how that would apply in this situation. Could you help me understand what this means or why I wasn't able to execute this step? 
+
+#FIRST way to make grid
+#grid.arrange(aea_africa, nab_africa, nrow = 1) 
+
+#Another way to make grid
+#aea_africa + nab_africa + plot_layout(ncol = 2, widths = c(1.5,1))
+#```
+
+
+### Africa Equidistant Conic
+
+```{r, message = FALSE, results='hide'}
+ggplot(map_africa) +
+  geom_sf() +
+  coord_sf(crs= equi_conic) +
+  theme_bw()
+```
+
+### How to Pull up States
+```{r, message = FALSE, results='hide'}
+ethiopia_states <-ne_states(country = "Ethiopia", returnclass="sf")
+
+ethiopia_map <- ggplot(ethiopia_states) +
+  geom_sf() + 
+  theme_bw()
+
+ethiopia_map
+```
+--------------------
+
+
+
+## Looking at Covid Data from "Our World in Data"
+
+### Loading Covid Data
+```{r, message = FALSE, results='hide'}
+covid_data <-read_csv("owid-covid-data.csv")
+```
+
+
+### Chloropleth Map of Covid Data
+```{r, message = FALSE, results='hide'}
+#**Note for Grader** Quite obviously there are some countries missing. I think this is a mix of the original data-set not including some countries and quite possibly inconsisitencies in the naming conventions that led me to lose relevant rows of my data. If I had more time I would have looked into this, but it felt daunting. Would appreciate a workshop or 101 on data cleaning.  
+
+covid_countries <- map_africa %>%
+  left_join(covid_data, map_africa, by =c("sovereignt"="location"))%>%
+  select(sovereignt, total_cases, geometry, income_grp, pop_est, new_cases)
+  
+  
+  ggplot(covid_countries, aes(fill=total_cases)) +
+    geom_sf(color=NA)+
+    coord_sf(crs= albers_africa) +
+    scale_fill_viridis_c(
+    name = "Number of\nconfirmed\nCOVID-19\ncases as of\nSept 20, 2020",
+    breaks = seq(100000, 600000, by = 100000),
+    labels = formatC(seq(100000, 600000, by = 100000), 
+                     big.mark = ",", format = "f", digits = 0)) +
+    theme_light() 
+  
+ # covid_states <-states_transformed %>%
+  #left_join(covid_us, by = c("name" = "Province_State")) %>%
+  #mutate(pop = 100000 * Confirmed / Incident_Rate) %>%
+  #select(name, pop, Confirmed, Deaths, Recovered, Active)
+```
+
+#### Proportional Symbol Map
+```{r, message = FALSE, results='hide'}
+covid_centeroids <- covid_countries %>%
+  st_centroid()
+
+ggplot(map_africa) +
+  geom_sf(fill = NA, color = "gray") +
+  geom_sf(data = covid_centeroids, 
+          aes(size = total_cases),
+          alpha = 0.5, color = "sienna") +
+  scale_size_continuous(name = "Reported cases\n of Covid-19 as of\nSeptember 20th, 2020",
+    breaks = seq(100000, 500000, by = 100000),
+    labels = formatC(seq(100000, 500000, by = 100000), 
+                     big.mark = ",", format = "f", digits = 0),
+    range = c(0, 20)) +
+  theme_void() 
+```
+#**Question for Grader* What would be your reccomendation on how to not have the circle overwhelm South Africa WHILE ALSO not making the contintental countries so small that they are not meaningfully readable. What's the comprimise position here? 
+
+
+### Mix of Proportional and Chloropleth
+```{r, message = FALSE, results='hide'}
+ggplot(covid_countries, aes(fill=total_cases)) +
+  #Chloropleth
+    geom_sf(color=NA)+
+    coord_sf(crs= albers_africa) +
+    scale_fill_viridis_c(
+    name = "Number of\nconfirmed\nCOVID-19\ncases as of\nSept 20, 2020",
+    breaks = seq(100000, 600000, by = 100000),
+    labels = formatC(seq(100000, 600000, by = 100000), 
+                     big.mark = ",", format = "f", digits = 0)) +
+  
+  #Proportional Symbol
+  geom_sf(data = covid_centeroids, 
+          aes(size = new_cases),
+          alpha = 0.5, color = "orangered") +
+  scale_size_continuous(name = "Number of New Cases",
+ #   legend.position = "left",
+    breaks = seq(100000, 500000, by = 100000),
+    labels = formatC(seq(100000, 500000, by = 100000), 
+                     big.mark = ",", format = "f", digits = 0),
+    range = c(0, 20))
+
+    theme_dark() 
+```
+
+**Question for Grader** Why is the legend.position = "left" not working? Should I be using ggplot2's Labs() instead? How do I get it to show that one variable is total reported cases and the circles are new cases? 
+
+
+#### Dorling Cartogram
+
+**Question for Grader*: What does this error message mean? 
+Error in packcircles::circleRepelLayout(x = dat.init, xysizecols = 1:3, : all sizes are missing and/or non-positive
+
+#```{r}
+covid_cartogram_dorling <- covid_countries %>%
+  st_transform(crs=bonne_north_africa) %>%
+
+  cartogram_dorling("total_cases")
+
+ggplot(covid_cartogram_dorling, aes(fill = new_cases)) +
+  geom_sf(color = NA) +
+  scale_fill_viridis_c(
+    name = "Number of confirmed\nCOVID-19 cases\nas of August 6, 2020",
+    breaks = seq(100000, 500000, by = 100000),
+    labels = formatC(seq(100000, 500000, by = 100000), 
+                     big.mark = ",", format = "f", digits = 0)) +
+  theme_map() +
+  theme(legend.background = element_blank())
+#```
+
+
+#### Cartogram
+**Question for Grader**: I kept getting the error message, "Error in if (meanSizeError < maxSizeError) break : missing value where TRUE/FALSE needed". Can you help me understand what this means? I've messed with the poles and quotes so much that I cant remember what goes where...
+ 
+#```{r}
+covid_transformed <- covid_countries %>%
+  st_transform(crs= equi_conic)%>%
+  
+covid_cartogram <- covid_transformed %>%
+  cartogram_cont("new_cases")%>%
+  
+ggplot(covid_transformed, aes(fill=new_cases)) + 
+  geof_sf(color = NA) +
+  scale_fill_viridis_c(
+    name = "Number of new cases\nCovid19\nas of Sepetember 20th, 2020") +
+theme_bw()
+#```
+
+
+
+
+
+
+## **R Cheat Sheet, References & Troubleshooting**
+Hello! I see this area of my assignment as predominantly a resource for myself as I learn R and as a resource to R if I ever need to return after a hiatus (and have forgotten everything I know). 
+
+
+Feel free to look through, but there is no need to grade anything in this section. 
+
+
+Collaborative Flowchart: https://miro.com/app/board/o9J_klc5-mA=/
+
+** Sage's Troubleshooting Checklist** <br/>
+0. Breathe. <br/>
+1. Is everything spelled/cApiTAlized correctly? <br/>
+2. Count your parentheses(), commas, and "quotes" <br/>
+    2.1 Check poles %>%, | <br/>
+3. Have you run the R chunks that are before the chunk with your error. <br/>
+5. What is the last thing you changed? Did you make sure you changed it in ALL the places it needs to be changed?<br/>
+6. Breathe. Maybe get a glass of water.  <br/>
+7. Type in the ?function() into the Console <br/>
+8. Do a Google search for "R Markdown" + Your Problem <br/>
+9. Try retyping the function from scratch.
+10. Try copying and pasting sections in another R Chunk --> Isolate the Problem <br/>
+11. Phone a friend. <br/>
+
+**Common Errors:** <br/>
+-If you are having a function not found error, check whether or not you have run your libraries. <br/>
+-YAML error, check the very beginning of your code
+- 
+
+**If you want to see the values of a variable as they appear in your dataset**
+#Race <br/>
+#unique(household_data$RAC1P_label) <br/>
+#Hispanic <br/>
+#unique(household_data$HISP_label) <br/>
+
+### References
+
+**For General R**
+R is for Data Science
+https://r4ds.had.co.nz/index.html
+
+Data Wrangling Cheat Sheet
+https://rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+*formatting*
+https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf
+
+*For GGPLOT**
+Top 50 Graph Types
+http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#Violin%20Plot
+
+GGplot Cheat Sheet
+https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+
+Color Pallets
+https://www.datanovia.com/en/blog/ggplot-colors-best-tricks-you-will-love/#predefined-ggplot-color-palettes
+
+
+Look into Wes Anderson Themes, WSJ, Economist
+
+
+Move Legend: 
+theme(legend.background = element_blank(),legend.position="right", 
+        legend.title = element_text(size=9))
+
+
+**Number Crunching**
+
+Another Way of Pulling Summary <br/>
+#mean(household_data$HINCP) <br/>
+#quantile(household_data$HINCP) <br/>
+#sd(household_data$HINCP) <br/>
+
+Simple Explanation of Dsitributions: 
+https://nezumisa.wordpress.com/2013/06/03/different-types-of-distributions/
+
+
+

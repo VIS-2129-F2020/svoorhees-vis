@@ -1,0 +1,558 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Assigment 1\_VIS},
+  pdfauthor={Sage Grey},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Assigment 1\_VIS}
+\author{Sage Grey}
+\date{9/12/2020}
+
+\begin{document}
+\maketitle
+
+\textbf{Loading Libraries}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(tidycensus)}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(tinytex)}
+
+
+\KeywordTok{library}\NormalTok{(wesanderson)}
+\KeywordTok{library}\NormalTok{(ggthemes)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{overview}{%
+\subsection{Overview}\label{overview}}
+
+Hello! Below are 10 graphs I generated using American Community Survey
+Data from 2018 for a Neighborhood (Single PUMA) in Albuquerque, NM.
+
+\textbf{Variables Used} 1. Household Income \textbar\textbar{}
+\textbf{HINCP} \textbar\textbar{} Categorical 2. When Structure was
+First Built \textbar\textbar{} \textbf{YBL} \textbar\textbar{}
+Categorical 3. Majority Race \textbar\textbar{} \textbf{RAC1P}
+\textbar\textbar{} Categorical 4. First Mortgage Payment
+\textbar\textbar{} \textbf{MRGP} \textbar\textbar{} Continuous 5.
+Monthly Rent\textbar\textbar{} \textbf{RNTP} \textbar\textbar{}
+Continuous 6. Travel Time To Work \textbar\textbar{} \textbf{JWMNP}
+\textbar\textbar{} Continuous 7. Location (PUMA) \textbar\textbar{}
+\textbf{PUMA}\textbar\textbar{} Categorical 8. Number of Persons in
+Household \textbar\textbar{} \textbf{NP}\textbar\textbar{} Continuous 9.
+Property Value \textbar\textbar{} \textbf{VALP} \textbar\textbar{}
+Continuous 10. Age Person \textbar\textbar{} \textbf{AGEP}
+\textbar\textbar{} Continuous
+
+\textbf{Variables Created} 1. Development \textbar\textbar{}
+\textbf{development}\textbar\textbar{} Categorical 2. Old Structures
+\textbar\textbar{} \textbf{struct\_old}\textbar\textbar{} Categorical 3.
+Structures Built in last twenty years \textbar\textbar{}
+\textbf{struct\_last\_twenty} \textbar\textbar{} Categorical
+
+\hypertarget{choosing-variables-creating-dataset}{%
+\subsection{Choosing Variables \& Creating
+DataSet}\label{choosing-variables-creating-dataset}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ass1_vis_vars <-}\StringTok{  }\KeywordTok{get_pums}\NormalTok{(}\DataTypeTok{variables =} \KeywordTok{c}\NormalTok{(}\StringTok{"YBL"}\NormalTok{, }
+                                          \StringTok{"HINCP"}\NormalTok{,}
+                                          \StringTok{"RAC1P"}\NormalTok{, }
+                                          \StringTok{"JWMNP"}\NormalTok{,}
+                                          \StringTok{"MRGP"}\NormalTok{,}
+                                          \StringTok{"RNTP"}\NormalTok{,}
+                                          \StringTok{"NP"}\NormalTok{, }
+                                          \StringTok{"PUMA"}\NormalTok{, }
+                                         \StringTok{"VALP"}\NormalTok{, }
+                                         \StringTok{"AGEP"}\NormalTok{,}
+                                         \StringTok{"HISP"}\NormalTok{),}
+                \DataTypeTok{state=} \StringTok{"NM"}\NormalTok{,}
+                \DataTypeTok{year =}\DecValTok{2018}\NormalTok{,}
+                \DataTypeTok{survey =}\StringTok{"acs1"}\NormalTok{,}
+                \DataTypeTok{recode=}\OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }
+\StringTok{                }\CommentTok{#Albuquerque PUMAS Only}
+\StringTok{                }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PUMA =} \KeywordTok{as.numeric}\NormalTok{(PUMA))}\OperatorTok{%>%}
+\StringTok{               }\KeywordTok{filter}\NormalTok{(PUMA }\OperatorTok{==}\StringTok{ }\DecValTok{00803}\NormalTok{,VALP }\OperatorTok{<}\StringTok{ }\DecValTok{2000000}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{                }\KeywordTok{filter}\NormalTok{(YBL_label }\OperatorTok{!=}\StringTok{ "1939 or earlier"}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{  }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{development =} \KeywordTok{case_when}\NormalTok{(YBL_label }\OperatorTok{==}\StringTok{ "1939 or earlier"} \OperatorTok{~}\StringTok{ "pre 1940"}\NormalTok{, }
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "1940 to 1949"} \OperatorTok{~}\StringTok{ "1940s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "1950 to 1959"} \OperatorTok{~}\StringTok{ "1950s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "1960 to 1969"} \OperatorTok{~}\StringTok{ "1960s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "1970 to 1979"} \OperatorTok{~}\StringTok{ "1970s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "1980 to 1989"} \OperatorTok{~}\StringTok{ "1980s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "1990 to 1999"} \OperatorTok{~}\StringTok{ "1990s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "2000 to 2004"} \OperatorTok{~}\StringTok{ "2000s"}\NormalTok{,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "2005"}\OperatorTok{~}\StringTok{ "2000s"}\NormalTok{ ,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "2006"}\OperatorTok{~}\StringTok{ "2000s"}\NormalTok{ ,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "2007"}\OperatorTok{~}\StringTok{ "2000s"}\NormalTok{ ,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "2008"}\OperatorTok{~}\StringTok{ "2000s"}\NormalTok{ ,}
+\NormalTok{                        YBL_label }\OperatorTok{==}\StringTok{ "2009"}\OperatorTok{~}\StringTok{ "2000s"}\NormalTok{ ,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2010"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2011"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2012"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2013"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2014"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2015"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2016"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2017"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{,}
+\NormalTok{                               YBL_label }\OperatorTok{==}\StringTok{ "2018"} \OperatorTok{~}\StringTok{ "2010s"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{    }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{struct_old =}\NormalTok{ (YBL_label }\OperatorTok{==}\StringTok{ "1939 or earlier"} \OperatorTok{|}
+\StringTok{                       }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "1940 to 1949"} \OperatorTok{|}\StringTok{ }
+\StringTok{                       }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "1950 to 1959"} \OperatorTok{|}\StringTok{ }
+\StringTok{                       }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "1960 to 1969"}\NormalTok{ )) }\OperatorTok{%>%}
+\StringTok{  }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{struct_last_twenty =}\NormalTok{ (YBL_label }\OperatorTok{==}\StringTok{ "2008"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2009"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2010"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2011"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2012"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2013"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2014"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2015"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2016"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2017"} \OperatorTok{|}
+\StringTok{                               }\NormalTok{YBL_label }\OperatorTok{==}\StringTok{ "2018"}\NormalTok{ )) }\OperatorTok{%>%}
+\StringTok{  }
+\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{name_of_puma =} \KeywordTok{case_when}\NormalTok{(}
+\NormalTok{  PUMA }\OperatorTok{==}\StringTok{ "801"} \OperatorTok{~}\StringTok{ "Far Northeast Heights"}\NormalTok{,}
+\NormalTok{  PUMA }\OperatorTok{==}\StringTok{ "802"} \OperatorTok{~}\StringTok{ "Near Northeast Heights"}\NormalTok{, }
+\NormalTok{  PUMA }\OperatorTok{==}\StringTok{ "803"} \OperatorTok{~}\StringTok{ "Southeast Heights"}\NormalTok{,}
+\NormalTok{  PUMA }\OperatorTok{==}\StringTok{ "804"} \OperatorTok{~}\StringTok{ "Central Abq & North Valley"}\NormalTok{,}
+\NormalTok{  PUMA }\OperatorTok{==}\StringTok{ "805"} \OperatorTok{~}\StringTok{ "Northwes Mesa, Paradise Hills, Navajo Nation -Tohajiilee Chapter"}\NormalTok{,}
+\NormalTok{  PUMA }\OperatorTok{==}\StringTok{ "806"}\OperatorTok{~}\StringTok{ "Southwest Mesa & South Valley"}\NormalTok{)) }\OperatorTok{%>%}
+
+\KeywordTok{select}\NormalTok{( struct_old, struct_last_twenty, HINCP ,RAC1P_label, JWMNP, MRGP, RNTP, NP, PUMA, name_of_puma, VALP, AGEP, development, HISP)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{ggplot-1}{%
+\subsection{GGPlot 1}\label{ggplot-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{options}\NormalTok{(}\DataTypeTok{scipen=}\DecValTok{999}\NormalTok{)}
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{ VALP, }\DataTypeTok{y=}\NormalTok{HINCP, }\DataTypeTok{color =}\NormalTok{ RAC1P_label, }\DataTypeTok{fill=}\NormalTok{RAC1P_label )) }\OperatorTok{+}
+\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{alpha=}\NormalTok{.}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"Income and Propery Values"}\NormalTok{, }
+         \DataTypeTok{subtitle=}\StringTok{"How doed PV to Income differ along racial demographics"}\NormalTok{,}
+         \DataTypeTok{caption=}\StringTok{"Source: ACS1 2018"}\NormalTok{,}
+         \DataTypeTok{x=}\StringTok{"Household Income"}\NormalTok{,}
+         \DataTypeTok{fill=}\StringTok{"Racee"}\NormalTok{)  }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{name=} \StringTok{"Income (Thousands)"}\NormalTok{,}
+                     \DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400000}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50000}\NormalTok{),}
+                     \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50}\NormalTok{),}
+                     \StringTok{""}\NormalTok{, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{name =}\StringTok{"Property Values"}\NormalTok{,}
+                     \DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{20000}\NormalTok{, }\DecValTok{900000}\NormalTok{, }\DataTypeTok{by=} \DecValTok{50000}\NormalTok{),}
+                     \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{20}\NormalTok{, }\DecValTok{900}\NormalTok{, }\DataTypeTok{by=} \DecValTok{50}\NormalTok{),}
+                                    \StringTok{"k"}\NormalTok{, }\DataTypeTok{sep =}\StringTok{""}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_discrete}\NormalTok{( }\DataTypeTok{name =} \StringTok{"Race"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_fill_discrete}\NormalTok{(}\DataTypeTok{name =}\StringTok{"Race"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_smooth}\NormalTok{(}\DataTypeTok{method =} \StringTok{"lm"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_tufte}\NormalTok{()}\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\textbf{Why would I make this graph:} There is an interesting phenomenon
+appearing in this chart that income is much more directly correlated to
+property values for Asian and White homeowners than it is for Black or
+Mixed Race individuals. After calculating this, I wanted to know how
+representative my dataset was by getting a better sense of the
+demographic breakdown in the area. Which led me to the next chart.
+
+\hypertarget{ggplot-2}{%
+\subsection{GGPLOT 2}\label{ggplot-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(NP, RAC1P_label)) }\OperatorTok{+}
+\StringTok{       }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{position =} \StringTok{"jitter"}\NormalTok{, }\DataTypeTok{size =}\NormalTok{.}\DecValTok{25}\NormalTok{, }\DataTypeTok{alpha =}\NormalTok{.}\DecValTok{5}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{      }\KeywordTok{scale_y_discrete}\NormalTok{(}\DataTypeTok{name =} \StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{      }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{name =} \StringTok{"Number of people in Household, Southeast Heights"}\NormalTok{,}
+                                 \DataTypeTok{breaks=} \KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{9}\NormalTok{, }\DataTypeTok{by =} \DecValTok{1}\NormalTok{),}
+                                \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{9}\NormalTok{, }\DataTypeTok{by =} \DecValTok{1}\NormalTok{), }\StringTok{""}\NormalTok{, }\DataTypeTok{sep=} \StringTok{""}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_fivethirtyeight}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\textbf{Why would I make this graph:} Gives a good sense of both the
+racial breakdown in the area, as well as indicating some information
+about common household structure.
+
+\hypertarget{gplot-3}{%
+\subsection{GPLOT 3}\label{gplot-3}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{AGEP, }\DataTypeTok{y=}\NormalTok{JWMNP)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{size=}\DecValTok{3}\NormalTok{,}\DataTypeTok{alpha=}\NormalTok{.}\DecValTok{7}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_segment}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{AGEP, }
+                   \DataTypeTok{xend=}\NormalTok{AGEP, }
+                   \DataTypeTok{y=}\DecValTok{0}\NormalTok{, }
+                   \DataTypeTok{yend=}\NormalTok{JWMNP)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"Whats Your Drive?"}\NormalTok{, }
+       \DataTypeTok{subtitle=}\StringTok{"Commute Time Versus Age"}\NormalTok{, }
+       \DataTypeTok{caption=}\StringTok{"source: ACS1"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Commute Time in Minutes"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Age of Individual"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle=}\DecValTok{65}\NormalTok{, }\DataTypeTok{vjust=}\FloatTok{0.6}\NormalTok{)) }\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme_fivethirtyeight}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+This graph made me think of the ``productive window'' of time a person
+spends working. Very few data points past 75. Also people frequently
+seem to round their commute time. Makes me think that I would want to
+make this into a categorical variable.
+
+\hypertarget{ggplot-4}{%
+\subsection{GGPLOT 4}\label{ggplot-4}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars,}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{RAC1P_label, }\DataTypeTok{fill=}\NormalTok{struct_last_twenty )) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_discrete}\NormalTok{(}\DataTypeTok{name=}\StringTok{""}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_discrete}\NormalTok{(}\DataTypeTok{name=}\StringTok{"House Built in the Last Twenty Years"}\NormalTok{)}\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-6-1.pdf}
+Not sure if this data is hiding information due to the skew of white
+alone.
+
+\hypertarget{ggplot-5}{%
+\subsection{GGPlot 5}\label{ggplot-5}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{g <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(HINCP)) }
+\NormalTok{g }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_density}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{fill=}\KeywordTok{factor}\NormalTok{(development)), }\DataTypeTok{alpha=}\FloatTok{0.8}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"Race and Home Development"}\NormalTok{, }
+         \DataTypeTok{subtitle=}\StringTok{"Decade Home was Built and income"}\NormalTok{,}
+         \DataTypeTok{caption=}\StringTok{"Source: ACS1 2018"}\NormalTok{,}
+         \DataTypeTok{x=}\StringTok{"Household Income"}\NormalTok{,}
+         \DataTypeTok{fill=}\StringTok{"Construction Decade"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400000}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50000}\NormalTok{),}
+                     \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50}\NormalTok{),}
+                     \StringTok{"k"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{)) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+Im still trying to figure out what this one means, but I feel that it
+could be useful someday.
+
+\hypertarget{ggplot-6}{%
+\subsection{GGplot 6}\label{ggplot-6}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{HINCP, }\DataTypeTok{y=}\NormalTok{development)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{size=}\DecValTok{5}\NormalTok{, }\DataTypeTok{alpha=}\NormalTok{.}\DecValTok{25}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\StringTok{"Household Income"}\NormalTok{,}
+                      \DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400000}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50000}\NormalTok{),}
+                     \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50}\NormalTok{),}
+                     \StringTok{"k"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_y_discrete}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Decade Home was Constructed"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-8-1.pdf}
+SO I thought this map was interesting, in that many of the highest
+income earners were in 1950s houses. My next thought was thinking about
+my first graph that revealed different correlations to income/property
+values along race. So for my next graph, I wanted to bring that variable
+in as well.
+
+\hypertarget{ggplot-7}{%
+\subsection{GGPLOT 7}\label{ggplot-7}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{HINCP, }\DataTypeTok{y=}\NormalTok{development, }\DataTypeTok{color=}\NormalTok{RAC1P_label)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{size=}\DecValTok{5}\NormalTok{, }\DataTypeTok{alpha=}\NormalTok{.}\DecValTok{25}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_x_continuous}\NormalTok{(}\StringTok{"Household Income"}\NormalTok{,}
+                      \DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400000}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50000}\NormalTok{),}
+                     \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50}\NormalTok{),}
+                     \StringTok{"k"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_y_discrete}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Decade Home was Constructed"}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{theme_classic}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-9-1.pdf}
+Interesting! Not entirely sure it is worth the lack of visual clarity,
+if developing further, I would categorize into white/non-white.
+
+\hypertarget{ggplot-8}{%
+\subsection{GGPlot 8}\label{ggplot-8}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{g <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{development, }\DataTypeTok{y=}\NormalTok{NP))}
+\NormalTok{g }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_violin}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"House: Deccade Built and Number of People In It"}\NormalTok{, }
+       \DataTypeTok{subtitle=}\StringTok{"Were the 80s for large families?"}\NormalTok{,}
+       \DataTypeTok{caption=}\StringTok{"Source: ACS1 2018"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Decade Home Constructed"}\NormalTok{,}
+       \DataTypeTok{y=}\StringTok{"Number of People In Household"}\NormalTok{) }\OperatorTok{+}
+\KeywordTok{theme_fivethirtyeight}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-10-1.pdf}
+After making this, I was really excited to see if this would be a BETTER
+way of expressing the data in plots 6 \& 7.
+
+\hypertarget{ggplot-9}{%
+\subsection{GGPlot 9}\label{ggplot-9}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{g <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{development, }\DataTypeTok{y=}\NormalTok{HINCP))}
+\NormalTok{g }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_violin}\NormalTok{(}\DataTypeTok{siez=}\DecValTok{8}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"Decade Constructed and Income of Inhabitants"}\NormalTok{, }
+       \DataTypeTok{subtitle=}\StringTok{"Rich? Move into a 1950s home?"}\NormalTok{,}
+       \DataTypeTok{caption=}\StringTok{"Source: ACS1 2018"}\NormalTok{,}
+       \DataTypeTok{x=}\StringTok{"Decade Home Constructed"}\NormalTok{,}
+       \DataTypeTok{y=}\StringTok{"Household Income"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{breaks =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400000}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50000}\NormalTok{),}
+                     \DataTypeTok{labels =} \KeywordTok{paste}\NormalTok{(}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{400}\NormalTok{, }\DataTypeTok{by =} \DecValTok{50}\NormalTok{),}
+                     \StringTok{"k"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme_economist_white}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Ignoring unknown parameters: siez
+\end{verbatim}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-11-1.pdf}
+DEFINITELY an improvement!
+
+\hypertarget{ggplot-10}{%
+\subsection{GGPlot 10}\label{ggplot-10}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{NP, }\DataTypeTok{y=}\NormalTok{JWMNP)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\StringTok{"tomato2"}\NormalTok{, }\DataTypeTok{size=}\DecValTok{3}\NormalTok{, }\DataTypeTok{alpha=}\NormalTok{.}\DecValTok{4}\NormalTok{) }\OperatorTok{+}\StringTok{  }
+\StringTok{  }\KeywordTok{geom_segment}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{NP, }
+                   \DataTypeTok{xend=}\NormalTok{NP, }
+                   \DataTypeTok{y=}\KeywordTok{min}\NormalTok{(JWMNP), }
+                   \DataTypeTok{yend=}\KeywordTok{max}\NormalTok{(JWMNP)), }
+               \DataTypeTok{linetype=}\StringTok{"dashed"}\NormalTok{, }
+               \DataTypeTok{size=}\FloatTok{0.1}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title=}\StringTok{"Do your roomates make you late?"}\NormalTok{, }
+       \DataTypeTok{subtitle=}\StringTok{"Housemates v Commute"}\NormalTok{, }
+       \DataTypeTok{caption=}\StringTok{"source: ACS1 2018"}\NormalTok{) }\OperatorTok{+}\StringTok{  }
+\StringTok{  }\KeywordTok{scale_x_discrete}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Number of Housemates"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{name=}\StringTok{"Minutes in Daily Commute"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\hypertarget{ggplot-11-you-promised-we-could-have-a-truly-terrible-one}{%
+\subsection{\texorpdfstring{GGPlot 11 --\textgreater{} you promised we
+could have a \textbf{truly} terrible
+one!}{GGPlot 11 --\textgreater{} you promised we could have a truly terrible one!}}\label{ggplot-11-you-promised-we-could-have-a-truly-terrible-one}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(ass1_vis_vars, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{NP, }\DataTypeTok{y=}\NormalTok{MRGP)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\DataTypeTok{color=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Graphs_Assignment1_Vis_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\hypertarget{r-cheat-sheet-references-troubleshooting}{%
+\subsection{R Cheat Sheet, References \&
+Troubleshooting}\label{r-cheat-sheet-references-troubleshooting}}
+
+Hello! I see this area of my assignment as predominantly a resource for
+myself as I learn R and as a resource to R if I ever need to return
+after a hiatus (and have forgotten everything I know).
+
+Feel free to look through, but there is no need to grade anything in
+this section.
+
+\textbf{Troubleshooting Checklist} 0. Breathe. 1. Is everything
+spelled/cApiTAlized correctly? 2. Count your parentheses(), commas, and
+``quotes'' 2.1 Check poles \%\textgreater\%, \textbar{} 3. Have you run
+the R chunks that are before the chunk with your error. 5. What is the
+last thing you changed? Did you make sure you changed it in ALL the
+places it needs to be changed? 6. Breathe. Maybe get a glass of water.
+7. Type in the ?function() into the Console 8. Do a Google search for
+``R Markdown'' + Your Problem 9. Try copying and pasting sections in
+another R Chunk --\textgreater{} Isolate the Problem 10. Phone a friend.
+
+\textbf{Common Errors:} -If you are having a function not found error,
+check whether or not you have run your libraries. -YAML error, check the
+very beginning of your code -
+
+\hypertarget{references}{%
+\subsubsection{References}\label{references}}
+
+\textbf{For General R} R is for Data Science
+\url{https://r4ds.had.co.nz/index.html}
+
+Data Wrangling Cheat Sheet
+\url{https://rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf}
+
+*For GGPLOT** Top 50 Graph Types
+\url{http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html\#Violin\%20Plot}
+
+GGplot Cheat Sheet
+\url{https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf}
+
+Color Pallets
+\url{https://www.datanovia.com/en/blog/ggplot-colors-best-tricks-you-will-love/\#predefined-ggplot-color-palettes}
+
+Look into Wes Anderson Themes, WSJ, Economist
+
+\#\#Variables (For Reference)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Person Level}
+\NormalTok{person_vars_}\DecValTok{2018}\NormalTok{ <-}\StringTok{ }\NormalTok{pums_variables }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{distinct}\NormalTok{(year, survey, var_code, var_label, data_type, level) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(level}\OperatorTok{==}\StringTok{"person"}\NormalTok{, year}\OperatorTok{==}\DecValTok{2018}\NormalTok{, survey}\OperatorTok{==}\StringTok{"acs1"}\NormalTok{)}
+
+\CommentTok{#HouseHold Level}
+\NormalTok{hh_vars_}\DecValTok{2018}\NormalTok{ <-}\StringTok{ }\NormalTok{pums_variables }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{distinct}\NormalTok{(year, survey, var_code, var_label, data_type, level)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(level}\OperatorTok{==}\StringTok{"housing"}\NormalTok{, year}\OperatorTok{==}\DecValTok{2018}\NormalTok{, survey}\OperatorTok{==}\StringTok{"acs1"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{document}
