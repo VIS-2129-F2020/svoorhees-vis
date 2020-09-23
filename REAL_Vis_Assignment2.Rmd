@@ -17,10 +17,8 @@ Assignment is to show a map of a large geogaphic area with 3 seperate map projec
 
 An additional tutorial for map projections is: https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html
 
-## Note for Grader
+### *Note for Grader*
 1. I had a truly terrible RStudio problem that gobbled a lot of my time this week. I finally worked with Carole and was able to figure out some workarounds. With a lot of time lost to that, this assignment is less flushed out/polished than I would like it to be. I have left questions at various points throughout the code and at areas that I was not able to successfully run. If the answers are simple, you can answer them, otherwise I will come to office hours and ask them there. (The notes are mostly there to help me remember my questions). 
-
-2. Part of my R Studio problem is that I can't seem to Knit files. I'm going to try to uninstall and reinstall RStudio and R tomorrow. But if things look awful, It's because I couldnt knit to test aesthetics. 
 
 
 ### Housekeeping & loadign Libraries
@@ -91,7 +89,7 @@ ggplot(map_africa) +
 
 ```
 
-#### ALbers Equal Area
+### ALbers Equal Area
 
 ```{r, message = FALSE, results='hide'}
 ggplot(map_africa) +
@@ -99,27 +97,29 @@ ggplot(map_africa) +
   coord_sf(crs= albers_africa) +
   theme_bw()
 ```
+
 ### Albers Equal Area and North Africa Bonne Compared
 
-#```{r}
-nab_africa <- ggplot(map_africa) +
+**Question for Grader**: I wanted to try to put the maps side by side.I saw Jessica Tang use this very effectively. The two methods below were on Stack Overflow, but I couldn't get either of them to work. The grid.arrange seemed like the most obvious, but I was getting the error " Error: geom_sf() must be used with coord_sf()." In other instances when I used this code, I used st_transform(). But I'm not sure how that would apply in this situation. Could you help me understand what this means or why I wasn't able to execute this step? 
+
+>#```{r}
+
+>nab_africa <- ggplot(map_africa) +
   geom_sf() +
   coord_sf(crs= bonne_north_africa) +
   theme_bw() +
   coord_fixed(1.3)
 
-aea_africa <- ggplot(map_africa) +
+>aea_africa <- ggplot(map_africa) +
   geom_sf() +
   coord_sf(crs= albers_africa) +
   theme_bw() +
   coord_fixed(1.3)
 
-#**Question for Grader**: I wanted to try to put the maps side by side. The two methods below were on Stack Overflow, but I couldn't get either of them to work. The grid.arrange seemed like the most obvious, but I was getting the error " Error: geom_sf() must be used with coord_sf()." In other instances when I used this code, I used st_transform(). But I'm not sure how that would apply in this situation. Could you help me understand what this means or why I wasn't able to execute this step? 
-
-#FIRST way to make grid
+>#FIRST way to make grid
 #grid.arrange(aea_africa, nab_africa, nrow = 1) 
 
-#Another way to make grid
+>#Another way to make grid
 #aea_africa + nab_africa + plot_layout(ncol = 2, widths = c(1.5,1))
 #```
 
@@ -143,11 +143,10 @@ ethiopia_map <- ggplot(ethiopia_states) +
 
 ethiopia_map
 ```
---------------------
 
 
 
-## Looking at Covid Data from "Our World in Data"
+## **Looking at Covid Data from "Our World in Data"*
 
 ### Loading Covid Data
 ```{r, message = FALSE, results='hide'}
@@ -180,7 +179,8 @@ covid_countries <- map_africa %>%
   #select(name, pop, Confirmed, Deaths, Recovered, Active)
 ```
 
-#### Proportional Symbol Map
+### Proportional Symbol Map
+
 ```{r, message = FALSE, results='hide'}
 covid_centeroids <- covid_countries %>%
   st_centroid()
@@ -197,7 +197,7 @@ ggplot(map_africa) +
     range = c(0, 20)) +
   theme_void() 
 ```
-#**Question for Grader* What would be your reccomendation on how to not have the circle overwhelm South Africa WHILE ALSO not making the contintental countries so small that they are not meaningfully readable. What's the comprimise position here? 
+**Question for Grader** What would be your recommendation on how to not have the circle overwhelm South Africa WHILE ALSO not making the other countries circles so small that they are not meaningfully readable. What's the compromise position here? 
 
 
 ### Mix of Proportional and Chloropleth
@@ -221,26 +221,24 @@ ggplot(covid_countries, aes(fill=total_cases)) +
     breaks = seq(100000, 500000, by = 100000),
     labels = formatC(seq(100000, 500000, by = 100000), 
                      big.mark = ",", format = "f", digits = 0),
-    range = c(0, 20))
-
+    range = c(0, 20)) +
     theme_dark() 
 ```
 
 **Question for Grader** Why is the legend.position = "left" not working? Should I be using ggplot2's Labs() instead? How do I get it to show that one variable is total reported cases and the circles are new cases? 
 
 
-#### Dorling Cartogram
+### Dorling Cartogram
 
 **Question for Grader*: What does this error message mean? 
 Error in packcircles::circleRepelLayout(x = dat.init, xysizecols = 1:3, : all sizes are missing and/or non-positive
 
-#```{r}
-covid_cartogram_dorling <- covid_countries %>%
+>#```{r}
+>covid_cartogram_dorling <- covid_countries %>%
   st_transform(crs=bonne_north_africa) %>%
+ > cartogram_dorling("total_cases")
 
-  cartogram_dorling("total_cases")
-
-ggplot(covid_cartogram_dorling, aes(fill = new_cases)) +
+>ggplot(covid_cartogram_dorling, aes(fill = new_cases)) +
   geom_sf(color = NA) +
   scale_fill_viridis_c(
     name = "Number of confirmed\nCOVID-19 cases\nas of August 6, 2020",
@@ -252,17 +250,17 @@ ggplot(covid_cartogram_dorling, aes(fill = new_cases)) +
 #```
 
 
-#### Cartogram
+### Cartogram
 **Question for Grader**: I kept getting the error message, "Error in if (meanSizeError < maxSizeError) break : missing value where TRUE/FALSE needed". Can you help me understand what this means? I've messed with the poles and quotes so much that I cant remember what goes where...
  
-#```{r}
+>#```{r}
 covid_transformed <- covid_countries %>%
   st_transform(crs= equi_conic)%>%
   
-covid_cartogram <- covid_transformed %>%
+>covid_cartogram <- covid_transformed %>%
   cartogram_cont("new_cases")%>%
   
-ggplot(covid_transformed, aes(fill=new_cases)) + 
+>ggplot(covid_transformed, aes(fill=new_cases)) + 
   geof_sf(color = NA) +
   scale_fill_viridis_c(
     name = "Number of new cases\nCovid19\nas of Sepetember 20th, 2020") +
