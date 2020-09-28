@@ -39,6 +39,7 @@ library(ggthemes)
 library(ggspatial)
 library(units)
 library(nngeo)
+library(sf)
 ```
 
 ```{r}
@@ -58,7 +59,7 @@ public_libraries <- st_read("http://bostonopendata-boston.opendata.arcgis.com/da
 
 soc_vulnerab <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/34f2c48b670d4b43a617b1540f20efe3_0.kml?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
 
-bos_zip_code <-  st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/53ea466a189b4f43b3dfb7b38fa7f3b6_1.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
+bos_zip_code <-  st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/53ea466a189b4f43b3dfb7b38fa7f3b6_1.geojson?outSR={%22latestWkid%22:2249,%22wkid%22:102686}")
 
 fio_records <- st_read("https://data.boston.gov/dataset/4ebae674-28c1-4b9b-adc3-c04c99234a68/resource/03f33240-47c1-46f2-87ae-bcdabec092ad/download/mark43_fieldcontacts_for_public_20192.csv")
 ```
@@ -125,7 +126,7 @@ ggplot(school_buffer) +
 ```
 
 
-
+===
 ### Subsetting Points with a polygon 
 ```{r}
 public_private_schools <- non_public_schools[school_buffer,]
@@ -204,9 +205,19 @@ ggplot(fio_records, aes(x=zip)) +
 ```
 ```{r}
 
-freq_stop <- as.data.frame(table(unlist(fio_records$zip)))
 
-ggplot(bos_zip_code) +
+freq_stop <- as.data.frame(table(unlist(fio_records$zip))) %>%
+
+
+zip_stops <- bos_zip_code %>%
+  left_join(freq_stop, bos_zip_code %>%as.data.frame(), by =c("Var1" = "ZIPS"))%>%
+  select(ZIPS, Freq, OBJECTID,geometry)
+
+
+```
+
+
+ggplot(zip_stops) +
   geom_sf(data=freq_stop,
           aes(fill = Freq) +
   scale_fill_viridis_c(name = "Blah Blah Blah",
