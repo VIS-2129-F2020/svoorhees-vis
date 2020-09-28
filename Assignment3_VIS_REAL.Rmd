@@ -1,0 +1,219 @@
+---
+title: 'Assignment 3: Vis'
+author: "Sage Grey"
+date: "9/27/2020"
+output: html_document
+---
+
+#### **Assignment Overview:**
+Creative Assignment 3: Areas and locations (points/polygons) (due before class on September 28)
+
+Identify a municipal open data portal and find two point layers (A and B) and two polygon layers (C and
+D), where the polygons do not cover the entire municipality (in other words, you shouldn’t use the set of all
+census tracts as one of your layers, but you could use a subset of census tracts that have particular
+characteristics). 
+
+Calculate eight of the following 15 possible metrics, and illustrate the results of each calculation with a
+map.
+1. The number and proportion of A points within a specified distance of B points.
+2. The number and proportion of B points with a specified distance of A points.
+3. The average (Euclidean) distance between A points and B points.
+4. The average (Euclidean) distance between A points and their nearest respective B points.
+5. The average (Euclidean) distance between B points and their nearest respective A points.
+6. The number and proportion of A points within C polygons.
+7. The number and proportion of A points within D polygons.
+8. The number and proportion of B points within C polygons.
+9. The number and proportion of B points within D polygons.
+10. The number and proportion of C polygons containing A points.
+11. The number and proportion of D polygons containing A points.
+12. The number and proportion of C polygons containing B points.
+13. The number and proportion of D polygons containing B points.
+14. The number and proportion of C polygons that overlap with D polygons.
+15. The number and proportion of D polygons that overlap with C polygons.
+
+
+```{r setup, include=FALSE}
+library(sf)
+library(tidyverse)
+library(ggthemes)
+library(ggspatial)
+library(units)
+library(nngeo)
+```
+
+```{r}
+nhoods_bos <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/3525b0ee6e6b427f9aab5d0a1d0a1a28_0.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D", quiet = TRUE )
+
+pol_dist_bos <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/9a3a8c427add450eaf45a470245680fc_5.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D",quiet =TRUE)
+
+hosp_bos <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/8f1e5741a4ee4c0f82925d17aab3c002_2.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D", quiet =TRUE)
+
+bos_police_stations <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/e5a0066d38ac4e2abbc7918197a4f6af_6.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
+
+non_public_schools <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/0046426a3e4340a6b025ad52b41be70a_1.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
+
+public_schools <-st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/1d9509a8b2fd485d9ad471ba2fdb1f90_0.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
+
+public_libraries <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/cb00f9248aa6404ab741071ca3806c0e_6.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
+
+soc_vulnerab <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/34f2c48b670d4b43a617b1540f20efe3_0.kml?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
+
+bos_zip_code <-  st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/53ea466a189b4f43b3dfb7b38fa7f3b6_1.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
+
+fio_records <- st_read("https://data.boston.gov/dataset/4ebae674-28c1-4b9b-adc3-c04c99234a68/resource/03f33240-47c1-46f2-87ae-bcdabec092ad/download/mark43_fieldcontacts_for_public_20192.csv")
+```
+
+
+#SETUP Coordinate System
+```{r}
+MA_state_plane <- "+proj=lcc +lat_1=41.71666666666667 +lat_2=42.68333333333333 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +units=m +no_defs"
+
+nhoods_bos <- nhoods_bos %>%
+  st_transform(MA_state_plane)
+
+pol_dist_bos <- pol_dist_bos %>%
+  st_transform(MA_state_plane)
+
+hosp_bos <- hosp_bos %>%
+  st_transform(MA_state_plane)
+
+bos_police_stations <- bos_police_stations %>%
+  st_transform(MA_state_plane)
+
+non_public_schools <- non_public_schools %>%
+  st_transform(MA_state_plane)
+
+bos_zip_code <- bos_zip_code %>%
+  st_transform(MA_state_plane)
+
+public_schools <- public_schools%>%
+  st_transform(MA_state_plane)
+
+public_libraries <- public_libraries %>%
+  st_transform(MA_state_plane)
+
+soc_vulnerab <- soc_vulnerab %>%
+  st_transform(MA_state_plane)
+```
+
+
+
+# Setup Map
+```{r}
+ggplot(nhoods_bos) +
+ # geom_sf(fill = NA, color ="black") +
+  geom_sf(data=hosp_bos, color ="sienna", size = 2, alpha =.75) +
+  geom_sf(data=pol_dist_bos, fill =NA, color ="gray") +
+  geom_sf(data =bos_zip_code, fill ="lightblue", color="darkgreen", alpha =.25) +
+  geom_sf(data =public_schools, color = "rosybrown4") +
+  theme_map() +
+  annotation_scale()
+```
+
+
+## Creating A Buffer (200 meters from a public school)
+```{r}
+school_buffer <- st_buffer(public_schools, dist =200) %>% 
+  st_union()
+
+ggplot(school_buffer) +
+  geom_sf(data = nhoods_bos, fill =NA) +
+  geom_sf(color = "paleturquoise3", size=1.4 ) +
+  #geom_sf(data =public_libraries, color ="orangered2") +
+  geom_sf(data =non_public_schools, color = "royalblue3") +
+  theme_map()
+```
+
+
+
+### Subsetting Points with a polygon 
+```{r}
+public_private_schools <- non_public_schools[school_buffer,]
+
+ggplot(school_buffer) +
+  # geom_sf(data = nhoods_bos, fill =NA) +
+  geom_sf() +
+  geom_sf(data =public_private_schools,
+          color = "royalblue3",
+          size = 2) +
+  theme_map()
+```
+
+```{r}
+non_public_schools <- non_public_schools %>% 
+  st_join(public_private_schools) %>%
+  mutate(by_public = !is.na(Name.y))
+
+n_private_public <-sum(non_public_schools$by_public)
+
+n_private_public
+```
+```{r}
+n_non_public_schools <- length(non_public_schools$by_public)
+
+pct_PPP <- n_private_public / n_non_public_schools 
+
+pct_PPP
+```
+```{r}
+left_side <- st_bbox(non_public_schools)$xmin
+right_side <- st_bbox(non_public_schools)$xmax
+top_side <- st_bbox(non_public_schools)$ymin
+
+
+ggplot(nhoods_bos) +
+  geom_sf() +
+  geom_sf(data = non_public_schools, aes(color = by_public)) +
+  scale_color_manual(values =c("#94A89A", "#A44A3F"),
+                     name ="Private Schools \n by distance to a public school",
+                     labels = c("No Public School within 200 Meters",
+                                "Public School within 200 Meters")) +
+  
+  #annotation_scale(location = "br") +
+  annotation_north_arrow(location = "tr",
+                         style = north_arrow_minimal()) +
+  annotate(geom = "text",
+           x = right_side, 
+           y = top_side, 
+           label = paste("Of the ", 
+                         prettyNum(n_non_public_schools, big.mark = ","),
+                         " private \nschools in Boston\n", 
+                         prettyNum(n_private_public, big.mark = ","),
+                         " (", 
+                         prettyNum(100*pct_PPP, digits = 0),
+                         "%) are within 200\nmeters of a public school.",
+                         sep = ""),
+           hjust = 0, vjust = 0, size = 3) +
+  theme_map() +
+  theme(panel.background = element_rect(fill = "#D4E09B"),
+        legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "#D4E09B"))
+  
+
+```
+
+
+
+
+#### Chloropleth FIO Records by ZipCodes
+```{r}
+ggplot(fio_records, aes(x=zip)) +
+   theme(axis.text.x = element_text(angle=65, vjust=0.6)) +
+  coord_flip() +
+  geom_bar()
+```
+```{r}
+
+freq_stop <- as.data.frame(table(unlist(fio_records$zip)))
+
+ggplot(bos_zip_code) +
+  geom_sf(data=freq_stop,
+          aes(fill = Freq) +
+  scale_fill_viridis_c(name = "Blah Blah Blah",
+                       breaks = breaks <- seq(0, 30000, by = 5000),
+                       labels = paste(prettyNum(breaks, big.mark = ","))) +
+  theme_map() 
+```
+
+
+
