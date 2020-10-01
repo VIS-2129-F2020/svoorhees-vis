@@ -201,21 +201,51 @@ ggplot(nhoods_bos) +
 ggplot(fio_records, aes(x=zip)) +
    theme(axis.text.x = element_text(angle=65, vjust=0.6)) +
   coord_flip() +
-  geom_bar()
+  geom_bar() +
+  ggsave("fio_in_progrss.png")
 ```
+```{r}
+freq_stop <- as.data.frame(table(unlist(fio_records$zip)))
+zip_stops <- bos_zip_code %>%
+left_join(freq_stop, by =c("ZIP5" = "Var1"))%>%
+dplyr::select(ZIP5, Freq, OBJECTID,geometry)
+
+```
+
 ```{r}
 
 
-freq_stop <- as.data.frame(table(unlist(fio_records$zip))) %>%
+ggplot(zip_stops) +
+  geom_sf(data= zip_stops, aes( fill= Freq)) +
+  
+  scale_fill_distiller(palette = "Spectral",
+                       name = "Boston neighborhoods with \n highest number of 'Field \n Integration and Observation' stops",
+                       breaks = breaks <- seq(0, 400, by = 100),
+                       labels = paste(breaks, big.mark = ",")) +
+  
+  theme_map() +
+ theme(legend.position="top") +
+ theme(legend.background = element_rect(fill =light))
 
-
-zip_stops <- bos_zip_code %>%
-  left_join(freq_stop, bos_zip_code %>%as.data.frame(), by =c("Var1" = "ZIPS"))%>%
-  select(ZIPS, Freq, OBJECTID,geometry)
-
-
+ggsave("FIO_stops.png")
+ 
+  
+  
 ```
 
+```{r}
+
+ggplot(zip_stops) +
+  geom_sf(data= zip_stops, aes( fill= Freq)) +
+  scale_fill_manual(values = c(very_light, light, medium, dark, very_dark)) +
+  
+  annotation_scale(location = "br") +
+ 
+  theme_map() +
+ # theme(legend.position="top") 
+
+  
+```
 
 ggplot(zip_stops) +
   geom_sf(data=freq_stop,
@@ -225,6 +255,8 @@ ggplot(zip_stops) +
                        labels = paste(prettyNum(breaks, big.mark = ","))) +
   theme_map() 
 ```
-
+ scale_fill_viridis_c(name = "Boston neighborhoods\nby number of trees",
+                       breaks = breaks <- seq(0, 30000, by = 5000),
+                       labels = paste(breaks, big.mark = ",")) +
 
 
