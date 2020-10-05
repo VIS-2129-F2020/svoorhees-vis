@@ -6,43 +6,98 @@ output: html_document
 ---
 
 #### **Assignment Overview:**
-Creative Assignment 3: Areas and locations (points/polygons) (due before class on September 28)
+Creative Assignment 3: Areas and locations (points/polygons).
 
-Identify a municipal open data portal and find two point layers (A and B) and two polygon layers (C and
-D), where the polygons do not cover the entire municipality (in other words, you shouldn’t use the set of all
-census tracts as one of your layers, but you could use a subset of census tracts that have particular
-characteristics). 
+The intention of this assignment is to explore points and polygons, what kind of maps can be made with this information and what kind of information can be calculated. 
 
-Calculate eight of the following 15 possible metrics, and illustrate the results of each calculation with a
-map.
-1. The number and proportion of A points within a specified distance of B points.
-2. The number and proportion of B points with a specified distance of A points.
-3. The average (Euclidean) distance between A points and B points.
-4. The average (Euclidean) distance between A points and their nearest respective B points.
-5. The average (Euclidean) distance between B points and their nearest respective A points.
-6. The number and proportion of A points within C polygons.
-7. The number and proportion of A points within D polygons.
-8. The number and proportion of B points within C polygons.
-9. The number and proportion of B points within D polygons.
-10. The number and proportion of C polygons containing A points.
-11. The number and proportion of D polygons containing A points.
-12. The number and proportion of C polygons containing B points.
-13. The number and proportion of D polygons containing B points.
-14. The number and proportion of C polygons that overlap with D polygons.
-15. The number and proportion of D polygons that overlap with C polygons.
+For the assignment I downloaded information from the City of Boston Data portal. For the sake of exploration, I pulled in 11 KML files. 
 
+**LAYERS**
+
+*Point Data* <br> 
+A - Public Schools
+B - Private Schools
+
+*Polygons* <br>
+C - Boston Neighborhoods
+D - Flood Risk With Sea Level Rise
+
+**Other Point & Polygon Layers Used In Assignment**
+Public Libraries
+Hospitals
+FIO Records
+Police Stations
+Zip Codes
+Police Districts
+
+
+
+**NOTE FOR GRADER**: When I was doing this assignment, I was going of what Carole was saying in class about using this assignment creatively, and I was asking questions that were interesting to me about the City of Boston based off of the tools introduced in the tutorials. I did not realize the specific ABCD nature of the questions until I was going back to comment my code and add narrative. I believe that I satisfied the spirit of the assignment in calculating at least 6 unique relationships and mapping them, but I did not limit to the four variables, so the exact AtoBtoCtoD is not perfectly reflected in this assignment. I had fun with this assignment, and personally have no regrets, but acknowledge that I went off syllabus. 
+
+
+ps. I was not able to knit this, if it is messy visually, I apologize. I was unsure if using {r, message = FALSE, results='hide'} would mess up any of the mapping functionality. 
+
+#### Questions Answered With This Analysis: 
+
+*Map 1*: How many private schools are within 200 meters of a public school? 
+
+The number and proportion of A points within a specified distance of B points.
+
+--
+
+*Map 2*: Frequency of Field Interrogation and Observation Stops in each neighborhood. 
+
+The number and proportion of A points within C polygons. 
+
+-- 
+
+*Map 3 & 4:*  Average distance between Public Schools and Libraries -vs- Public Schools and Police Stations
+
+The average (Euclidean) distance between A points and their nearest respective B points
+
+
+--
+
+*Map 5 & 6:* The number of public and private schools in each neighborhood. 
+
+The number and proportion of B points within D polygons. 
+
+--
+
+*Map 7:* How many neighborhoods will see Flooding Risk with Sea Level Rise? 
+
+The number and proportion of C polygons that overlap with D polygons.
+
+--
+
+*Map 8:* Which Neighborhoods have the highest density of hospitals? 
+
+The average density of A points in each D polygon.
+
+--
+
+*Map 9 & 10:* How do neighborhoods vary by density of Public Schools? Private Schools?  
+
+The average density of B points in each D polygon.
+
+## HOUSEKEEPING 
 
 ```{r setup, include=FALSE}
+# Loading Libraries
 library(sf)
 library(tidyverse)
 library(ggthemes)
 library(ggspatial)
 library(units)
 library(nngeo)
-library(sf)
+library(gridExtra)
+
 ```
 
-```{r}
+```{r, message = FALSE, results='hide'}
+# Loading KML files from the City of Boston
+
+
 nhoods_bos <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/3525b0ee6e6b427f9aab5d0a1d0a1a28_0.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D", quiet = TRUE )
 
 pol_dist_bos <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/9a3a8c427add450eaf45a470245680fc_5.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D",quiet =TRUE)
@@ -57,16 +112,16 @@ public_schools <-st_read("http://bostonopendata-boston.opendata.arcgis.com/datas
 
 public_libraries <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/cb00f9248aa6404ab741071ca3806c0e_6.kml?outSR=%7B%22latestWkid%22%3A2249%2C%22wkid%22%3A102686%7D")
 
-soc_vulnerab <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/34f2c48b670d4b43a617b1540f20efe3_0.kml?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
-
 bos_zip_code <-  st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/53ea466a189b4f43b3dfb7b38fa7f3b6_1.geojson?outSR={%22latestWkid%22:2249,%22wkid%22:102686}")
 
 fio_records <- st_read("https://data.boston.gov/dataset/4ebae674-28c1-4b9b-adc3-c04c99234a68/resource/03f33240-47c1-46f2-87ae-bcdabec092ad/download/mark43_fieldcontacts_for_public_20192.csv")
+
+sea_level_rise_36 <- st_read("http://bostonopendata-boston.opendata.arcgis.com/datasets/74692fe1b9b24f3c9419cd61b87e4e3b_4.kml?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
 ```
 
 
 #SETUP Coordinate System
-```{r}
+```{r, message = FALSE, results='hide'}
 MA_state_plane <- "+proj=lcc +lat_1=41.71666666666667 +lat_2=42.68333333333333 +lat_0=41 +lon_0=-71.5 +x_0=200000 +y_0=750000 +ellps=GRS80 +units=m +no_defs"
 
 nhoods_bos <- nhoods_bos %>%
@@ -93,26 +148,33 @@ public_schools <- public_schools%>%
 public_libraries <- public_libraries %>%
   st_transform(MA_state_plane)
 
-soc_vulnerab <- soc_vulnerab %>%
-  st_transform(MA_state_plane)
+sea_level_rise_36 <- sea_level_rise_36 %>%
+  st_transform((MA_state_plane))
 ```
 
 
 
-# Setup Map
+## Map 0:  Setup Map
+
+THis map exists solely for me to get my bearings using these KML files. I used it to experiment with what was possible to show all at once. I am leaving it with a display of neighborhood boundaries, police districts, hospitals and public/private schools. Messy, but it is all there! 
+
 ```{r}
 ggplot(nhoods_bos) +
  # geom_sf(fill = NA, color ="black") +
   geom_sf(data=hosp_bos, color ="sienna", size = 2, alpha =.75) +
   geom_sf(data=pol_dist_bos, fill =NA, color ="gray") +
   geom_sf(data =bos_zip_code, fill ="lightblue", color="darkgreen", alpha =.25) +
-  geom_sf(data =public_schools, color = "rosybrown4") +
+  geom_sf(data =public_schools, color = "royalblue") +
+  geom_sf(data =non_public_schools, color = "pink") 
+  
   theme_map() +
   annotation_scale()
 ```
 
 
-## Creating A Buffer (200 meters from a public school)
+## ** Map 1:** How many private schools are within 200 meters of a public school? (Using Buffers)
+
+#### *Step One:* Plot all the public and private schools
 ```{r}
 school_buffer <- st_buffer(public_schools, dist =200) %>% 
   st_union()
@@ -126,8 +188,9 @@ ggplot(school_buffer) +
 ```
 
 
-===
-### Subsetting Points with a polygon 
+
+
+#### *Step Two:* Subsetting Points with a polygon 
 ```{r}
 public_private_schools <- non_public_schools[school_buffer,]
 
@@ -156,6 +219,8 @@ pct_PPP <- n_private_public / n_non_public_schools
 
 pct_PPP
 ```
+#### *Step Three:* Plotting
+
 ```{r}
 left_side <- st_bbox(non_public_schools)$xmin
 right_side <- st_bbox(non_public_schools)$xmax
@@ -187,7 +252,7 @@ ggplot(nhoods_bos) +
            hjust = 0, vjust = 0, size = 3) +
   theme_map() +
   theme(panel.background = element_rect(fill = "#D4E09B"),
-        legend.background = element_rect(fill = alpha("white", 0.5), 
+     legend.background = element_rect(fill = alpha("white", 0.5), 
                                          color = "#D4E09B"))
   
 
@@ -196,7 +261,12 @@ ggplot(nhoods_bos) +
 
 
 
-#### Chloropleth FIO Records by ZipCodes
+## **Map 2:** Chloropleth FIO Records by ZipCodes 
+
+For this Map I wanted to take a CSV data set about Boston Police's Field Observation Stops. This is essentially a record of all the traffic stops and stop-and-frisk style stops for the city of Boston. In this dataset I am shown for each observation a street name and a zipcode. I figured that if I made a new dataframe that counted the frequency of each of those zipcodes appearing, I could map the information spatially by zipcode. 
+
+First I made a simple bar chart to see if the distribution was interesting/something that I wanted to pursue. After seeing the large disparities, I decided it was. 
+
 ```{r}
 ggplot(fio_records, aes(x=zip)) +
    theme(axis.text.x = element_text(angle=65, vjust=0.6)) +
@@ -204,6 +274,8 @@ ggplot(fio_records, aes(x=zip)) +
   geom_bar() +
   ggsave("fio_in_progrss.png")
 ```
+Next I created a new data frame called freq_stop that would hold the zipcodes and number of stops. I then joined this dataframe with my orignial dataframe downloaded from the Boston Police Department. 
+
 ```{r}
 freq_stop <- as.data.frame(table(unlist(fio_records$zip)))
 zip_stops <- bos_zip_code %>%
@@ -212,51 +284,327 @@ dplyr::select(ZIP5, Freq, OBJECTID,geometry)
 
 ```
 
+
+I then mapped this information as a chloropleth map over the city of Boston. 
+
 ```{r}
 
 
 ggplot(zip_stops) +
-  geom_sf(data= zip_stops, aes( fill= Freq)) +
+  geom_sf(data= zip_stops, color ="white",  aes( fill= Freq)) +
   
   scale_fill_distiller(palette = "Spectral",
-                       name = "Boston neighborhoods with \n highest number of 'Field \n Integration and Observation' stops",
-                       breaks = breaks <- seq(0, 400, by = 100),
+                       name = "Boston zipcodes with \n highest number of 'Field \n Integration and Observation' \n police stops",
+                       breaks = breaks <- seq(0, 500, by = 100),
                        labels = paste(breaks, big.mark = ",")) +
   
   theme_map() +
- theme(legend.position="top") +
- theme(legend.background = element_rect(fill =light))
+ #theme(legend.position="top") +
+ #theme(legend.background = element_rect(fill =light)) 
 
+  theme(panel.background = element_rect(fill = NA),
+        legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "black"))
+
+  
 ggsave("FIO_stops.png")
  
   
-  
 ```
+
+
+
+## *Map 3 & 4:* Number of Public & Private Schools within each neighborhood
+
+Number of Points within Polygons
+
+```{r}
+##PUBLIC SCHOOLS 
+#Count number of schools within each neighborhood
+nhoods_bos <- nhoods_bos %>%
+  mutate(num_pub_schools = lengths(st_covers(nhoods_bos, public_schools)))
+
+#Plot it
+pub_sch_map <-ggplot(nhoods_bos) +
+  geom_sf(color = "white", aes(fill = num_pub_schools)) + 
+  scale_fill_distiller(palette = "Spectral", 
+                       name = "Boston Neighborhoods \n by number of PUBLIC schools",
+                       breaks = breaks <- seq(0, 30, by = 3),
+                       labels = paste(breaks, big.mark = ",")) + 
+#Adjust Look of Map  
+ 
+theme_map() +
+  theme(legend.position="top") +
+ theme(legend.background = element_rect(fill =alpha(light,.5))) 
+                       
+##PRIVATE SCHOOLS 
+#Count number of schools within each neighborhood
+nhoods_bos <- nhoods_bos %>%
+  mutate(num_pri_schools = lengths(st_covers(nhoods_bos, non_public_schools)))
+
+#Plot it
+pri_sch_map <- ggplot(nhoods_bos) +
+  geom_sf(color = "white", aes(fill = num_pri_schools)) + 
+  scale_fill_distiller(palette = "Spectral", 
+                       name = "Boston Neighborhoods \n by number of PRIVATE schools",
+                       breaks = breaks <- seq(0, 30, by = 3),
+                       labels = paste(breaks, big.mark = ",")) + 
+#Adjust Look of Map  
+theme(legend.position="top") +
+  
+theme_map() +
+  theme(legend.position="top") +
+ theme(legend.background = element_rect(fill =alpha(light,.5))) 
+                       
+
+grid.arrange(pub_sch_map, pri_sch_map, ncol = 2)
+                       
+```
+
+
+
+
+## *Map 5 & 6:*  Avg Distance from a Public schools to Library -vs- Avg Distance from Public School to Poilce Station
 
 ```{r}
 
-ggplot(zip_stops) +
-  geom_sf(data= zip_stops, aes( fill= Freq)) +
-  scale_fill_manual(values = c(very_light, light, medium, dark, very_dark)) +
+# SCHOOLS AND POLICE STATIONS
+
+#Calculate Distances
+public_schools <- public_schools %>%
+  mutate(pol_dist = st_nn(public_schools, bos_police_stations, 
+                           returnDist = TRUE)$dist) %>%
+  mutate(pol_dist = as.numeric(pol_dist))
+
+avg_pol_dist <- mean(public_schools$pol_dist)
+
+avg_pol_dist
+
+
+#Plot 
+right_side <- st_bbox(public_schools)$xmax
+left_side  <- st_bbox(public_schools)$xmin
+top_side <- st_bbox(public_schools)$ymax
+bottom_side <- st_bbox(public_schools)$ymin
+
+
+pol_dist_map <- ggplot(nhoods_bos) +
+  geom_sf(fill = NA, 
+          color = "black") +
   
-  annotation_scale(location = "br") +
- 
+  geom_sf(data = public_schools, 
+          size = 4,
+          aes(color = pol_dist)) +
+  
+  coord_sf(xlim = c(left_side, right_side), 
+           ylim = c(bottom_side, top_side),
+           expand = FALSE) +
+  
+scale_color_distiller(palette = "Spectral", 
+                       breaks = breaks <- seq(0, 4000, by = 1000),
+                       labels = paste(breaks,
+                                      big.mark = ",", 
+                                      sep = "m")) +
+  
+  annotate(geom = "text", x = left_side + 300, 
+           y = top_side - 1200, 
+           label = paste("On average, a Boston public school\nis ", 
+                         prettyNum(avg_pol_dist, digits = 3),
+                         " meters from a police station.",
+                         sep = ""),
+           hjust = 0, vjust = 0, size = 3, color = "white") +
   theme_map() +
- # theme(legend.position="top") 
+  theme(panel.background = element_rect(fill = alpha("darkslategray",.7)),
+        legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "gray"))
 
+# PUBLIC SCHOOLS & LIBRARIES
+
+#Calculate Distances
+public_schools <- public_schools %>%
+  mutate(libr_dist = st_nn(public_schools, public_libraries, 
+                           returnDist = TRUE)$dist) %>%
+  mutate(libr_dist = as.numeric(libr_dist))
+
+avg_libr_dist <- mean(public_schools$libr_dist)
+
+avg_libr_dist
+
+#Plot
+right_side <- st_bbox(public_schools)$xmax
+left_side  <- st_bbox(public_schools)$xmin
+top_side <- st_bbox(public_schools)$ymax
+bottom_side <- st_bbox(public_schools)$ymin
+
+
+libr_dist_map <- ggplot(nhoods_bos) +
+  geom_sf(fill = NA, 
+          color = "black") +
   
+  geom_sf(data = public_schools, 
+          size = 4,
+          aes(color = libr_dist)) +
+  
+  coord_sf(xlim = c(left_side, right_side), 
+           ylim = c(bottom_side, top_side),
+           expand = FALSE) +
+  
+   
+  scale_color_distiller(palette = "Spectral", 
+                       breaks = breaks <- seq(0, 4000, by = 1000),
+                       labels = paste(breaks,
+                                      big.mark = ",", 
+                                      sep = "m")) +
+  
+
+  annotate(geom = "text", x = left_side + 300, 
+           y = top_side - 1200, 
+           label = paste("On average, a Boston public school\nis ", 
+                         prettyNum(avg_libr_dist, digits = 3),
+                         " meters from a public library.",
+                         sep = ""),
+           hjust = 0, vjust = 0, size = 3, color ="white") +
+  theme_map() +
+  theme(panel.background = element_rect(fill = alpha("darkslategray",.7)),
+        legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "gray")) 
+
+
+
+
+#Arrange in Grid
+
+grid.arrange(libr_dist_map, pol_dist_map, ncol = 2)
+
 ```
 
-ggplot(zip_stops) +
-  geom_sf(data=freq_stop,
-          aes(fill = Freq) +
-  scale_fill_viridis_c(name = "Blah Blah Blah",
-                       breaks = breaks <- seq(0, 30000, by = 5000),
-                       labels = paste(prettyNum(breaks, big.mark = ","))) +
-  theme_map() 
-```
- scale_fill_viridis_c(name = "Boston neighborhoods\nby number of trees",
-                       breaks = breaks <- seq(0, 30000, by = 5000),
-                       labels = paste(breaks, big.mark = ",")) +
 
+## **Map 7.** Flood Risk in the 36-Inches of Sea Level Rise Scenario
+
+Identifying Overlapping Polygons
+
+Step One: Use St_Overlaps
+```{r}
+nhoods_bos <- nhoods_bos %>%
+  mutate(num_flood = lengths(st_overlaps(nhoods_bos, sea_level_rise_36))) %>%
+  mutate(has_flood = num_flood > 0)
+
+```
+
+
+Step Two: Sum the Number that overlap
+```{r}
+flooding_neighborhoods <- sum(nhoods_bos$has_flood)
+
+flooding_neighborhoods
+
+```
+Step 3: Map
+```{r}
+right_side  <- st_bbox(nhoods_bos)$xmax
+top_side <- st_bbox(nhoods_bos)$ymax
+
+ggplot(sea_level_rise_36) +
+  geom_sf(fill = "lightcyan1", color = NA) +
+  geom_sf(data = nhoods_bos,
+          aes(fill = has_flood)) +
+  scale_fill_manual(values = c("ivory", "lightblue2"),
+          name = "What if the 36-inch Sea\n Level Rise scenario comes to pass?", 
+          labels = c("Neighborhood without\n flood risk",
+                     "Neighborhood with \nflood risk")) +
+  annotation_scale(location = "br") +
+  annotate(geom = "text", x = left_side, 
+           y = top_side -1000, 
+           label = paste(flooding_neighborhoods ,
+                         "of Boston's", 
+                         length(nhoods_bos$Name),
+                         "neighborhoods \n would have a flood\n risk with 36 inches \n of sea level rise"),
+           hjust = 0, vjust = 0, size = 3) +
+  theme_map() +
+  theme(panel.background = element_rect(fill = "gray90"),
+        legend.background = element_rect(fill = alpha("white", 0.5), 
+                                         color = "seashell2"))
+```
+
+## **Map 8:** Desnity of Hospitals in Each Neighborhood 
+
+The average density of hospital points in each neighborhood polygon. 
+
+```{r}
+nhoods_bos <- nhoods_bos %>%
+  #Set Vars
+  mutate(num_hosp = lengths(st_covers(nhoods_bos, hosp_bos))) %>%
+  
+  #Calculate
+  mutate(area = set_units(st_area(nhoods_bos), km^2)) %>%
+  mutate(hosp_dens = as.numeric(num_hosp / area))
+
+  #Plot
+ggplot(nhoods_bos) +
+  geom_sf(color = "white", 
+          aes(fill = hosp_dens)) +
+    scale_fill_distiller(palette = "Spectral",
+                         name = 
+                           "Hospital Density in \n Boston Neighborhoods",
+                       breaks = breaks <- seq(0, 20, by = 1),
+                       labels = paste(prettyNum(breaks, big.mark = ","),
+                                      "hospitals per square km")) +
+  theme_map() +
+  theme(legend.position = "right") 
+```
+
+
+After completing this final map, I figured it would be more interesting to anaylyze my Public/Private School Data by density, so ran those maps as well. 
+
+
+## **Map 9 & 10:** Density of Private & Public Schools  
+
+```{r}
+#PUBLIC SCHOOLS
+nhoods_bos <- nhoods_bos %>%
+  
+  #Calculate
+  mutate(area = set_units(st_area(nhoods_bos), km^2)) %>%
+  mutate(pub_school_dens = as.numeric(num_pub_schools / area))
+
+  #Plot
+pub_density <- ggplot(nhoods_bos) +
+  
+  geom_sf(color = "white", 
+          aes(fill = pub_school_dens)) +
+    scale_fill_distiller(palette = "Spectral",
+                         name = 
+                           "PUBLIC School Density in \n Boston Neighborhoods",
+                       breaks = breaks <- seq(0, 20, by = 5),
+                       labels = paste(prettyNum(breaks, big.mark = ","),
+                                      "public schools per square km")) +
+  theme_map() +
+  theme(legend.position = "right") 
+
+#PRIVATE SCHOOLS
+nhoods_bos <- nhoods_bos %>%
+  
+  #Calculate
+  mutate(area = set_units(st_area(nhoods_bos), km^2)) %>%
+  mutate(pri_school_dens = as.numeric(num_pri_schools / area))
+
+  #Plot
+pri_density <- ggplot(nhoods_bos) +
+  
+  geom_sf(color = "white", 
+          aes(fill = pri_school_dens)) +
+    scale_fill_distiller(palette = "Spectral",
+                         name = 
+                           "PRIVATE School Density in \n Boston Neighborhoods",
+                       breaks = breaks <- seq(0, 10, by = 1),
+                       labels = paste(prettyNum(breaks, big.mark = ","),
+                                      "private schools per square km")) +
+  theme_map() +
+  theme(legend.position = "right") 
+
+grid.arrange(pub_density, pri_density, ncol = 2, pub_sch_map, pri_sch_map, nrow=2)
+```
+YES! This second way of showing this information is definitively MORE USEFUL for the type of analysis I'm looking for! What this tells me is that while public schools are pretty well distributed around the city, private schools have higher density in a few specific neighborhoods. THis information was uncelar when only looking at the number of schools in each neighborhood.  
+
+**Next Steps:** I would like next to play around more with the FIO stops. I think plotting this information as density instead of frequency could be interesting. I also am interested in using the length of stop variable in the original dataset to calculate spatially where the most time spent interacting with the police in FIO stops is happening. 
 
