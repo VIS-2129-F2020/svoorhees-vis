@@ -1,8 +1,12 @@
 ---
-title: 'Assignment 3: Vis'
-author: "Sage Grey"
-date: "9/27/2020"
-output: html_document
+title: "Assignment 3: VIS"
+Date: 10/3/2020
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+    theme: cosmo
 ---
 
 #### **Assignment Overview:**
@@ -37,46 +41,46 @@ Police Districts
 
 ps. I was not able to knit this, if it is messy visually, I apologize. I was unsure if using {r, message = FALSE, results='hide'} would mess up any of the mapping functionality. 
 
-#### Questions Answered With This Analysis: 
+### Questions Answered With This Analysis: 
 
-*Map 1*: How many private schools are within 200 meters of a public school? 
+#### *Map 1*: How many private schools are within 200 meters of a public school? 
 
 The number and proportion of A points within a specified distance of B points.
 
 --
 
-*Map 2*: Frequency of Field Interrogation and Observation Stops in each neighborhood. 
+#### *Map 2*: Frequency of Field Interrogation and Observation Stops in each neighborhood. 
 
 The number and proportion of A points within C polygons. 
 
 -- 
 
-*Map 3 & 4:*  Average distance between Public Schools and Libraries -vs- Public Schools and Police Stations
+#### *Map 3 & 4:*  Average distance between Public Schools and Libraries -vs- Public Schools and Police Stations
 
 The average (Euclidean) distance between A points and their nearest respective B points
 
 
 --
 
-*Map 5 & 6:* The number of public and private schools in each neighborhood. 
+#### *Map 5 & 6:* The number of public and private schools in each neighborhood. 
 
 The number and proportion of B points within D polygons. 
 
 --
 
-*Map 7:* How many neighborhoods will see Flooding Risk with Sea Level Rise? 
+#### *Map 7:* How many neighborhoods will see Flooding Risk with Sea Level Rise? 
 
 The number and proportion of C polygons that overlap with D polygons.
 
 --
 
-*Map 8:* Which Neighborhoods have the highest density of hospitals? 
+#### *Map 8:* Which Neighborhoods have the highest density of hospitals? 
 
 The average density of A points in each D polygon.
 
 --
 
-*Map 9 & 10:* How do neighborhoods vary by density of Public Schools? Private Schools?  
+#### *Map 9 & 10:* How do neighborhoods vary by density of Public Schools? Private Schools?  
 
 The average density of B points in each D polygon.
 
@@ -154,11 +158,12 @@ sea_level_rise_36 <- sea_level_rise_36 %>%
 
 
 
-## Map 0:  Setup Map
+## **Map 0:**  Setup Map
 
 THis map exists solely for me to get my bearings using these KML files. I used it to experiment with what was possible to show all at once. I am leaving it with a display of neighborhood boundaries, police districts, hospitals and public/private schools. Messy, but it is all there! 
 
 ```{r}
+
 ggplot(nhoods_bos) +
  # geom_sf(fill = NA, color ="black") +
   geom_sf(data=hosp_bos, color ="sienna", size = 2, alpha =.75) +
@@ -167,8 +172,7 @@ ggplot(nhoods_bos) +
   geom_sf(data =public_schools, color = "royalblue") +
   geom_sf(data =non_public_schools, color = "pink") 
   
-  theme_map() +
-  annotation_scale()
+  theme_map() 
 ```
 
 
@@ -314,7 +318,7 @@ ggsave("FIO_stops.png")
 
 
 
-## *Map 3 & 4:* Number of Public & Private Schools within each neighborhood
+## **Map 3 & 4:** Number of Public & Private Schools within each neighborhood
 
 Number of Points within Polygons
 
@@ -335,7 +339,7 @@ pub_sch_map <-ggplot(nhoods_bos) +
  
 theme_map() +
   theme(legend.position="top") +
- theme(legend.background = element_rect(fill =alpha(light,.5))) 
+ theme(legend.background = element_rect(fill =alpha("white",.5))) 
                        
 ##PRIVATE SCHOOLS 
 #Count number of schools within each neighborhood
@@ -354,7 +358,7 @@ theme(legend.position="top") +
   
 theme_map() +
   theme(legend.position="top") +
- theme(legend.background = element_rect(fill =alpha(light,.5))) 
+ theme(legend.background = element_rect(fill =alpha("white",.5))) 
                        
 
 grid.arrange(pub_sch_map, pri_sch_map, ncol = 2)
@@ -364,7 +368,7 @@ grid.arrange(pub_sch_map, pri_sch_map, ncol = 2)
 
 
 
-## *Map 5 & 6:*  Avg Distance from a Public schools to Library -vs- Avg Distance from Public School to Poilce Station
+## **Map 5 & 6:**  Avg Distance from a Public schools to Library -vs- Avg Distance from Public School to Poilce Station
 
 ```{r}
 
