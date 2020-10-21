@@ -1,0 +1,103 @@
+---
+title: '"Technically Illegal"'
+author: "Sage Grey"
+date: "10/16/2020"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    theme: cosmo
+---
+
+
+
+![Artist Unknown](C:/Users/sageg/Desktop/svoorhees-quant/DitchSlap2017.jpg)
+
+## Skatable Arroyos in Albuquerque 
+
+Albuquerque is a city at the base of a mountain. The Sandia's stretch across the eastern edge of the city while the Rio Grande runs through the city roughly 15 miles to the east. As an accident of geography, the layout of the city creates a paradise for skate culture. The whole city is on a incline, and crisscrossing the city are our acequias and arroyos, the drainage ditches to collect water runoff from the mountains. Not all of these acequias are skatable, many are not paved and many are so steep and so treacherous that even most of the graffiti artists stay away, but others? Well, they are paradise. 
+
+Below is a map that highlights some of the city's finest arroyos. In bold are East-West arroyos amenable to wheels. The thinner lines are arroyos and acequias that while not suited for skaters have bike paths along them that are. Dashed line is Morris Ave, a  street with relatively low-traffic and a decent bike lane that can serve as a connector between two of the largest arroyo branches. 
+
+
+**Pre-Viewing: A few seconds of each should be enough to get the vibe**
+ 
+ <iframe width="560" height="315" src="https://www.youtube.com/embed/p-F2rK6bxz0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+ 
+ 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/5E-m2F6sbwQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+
+
+```{r, message = FALSE, results='hide'}
+# Run Libararies 
+library(raster)
+library(tidyverse)
+library(RStoolbox)
+library(ggthemes)
+library(ggspatial)
+library(osmdata)
+
+```
+
+
+## Baseline Arroyo Map
+![](C:/Users/sageg/Desktop/svoorhees-quant/Skatable_Arroyos_No_Background.jpg)
+This is a  sketch of some of the best arroyos in the city. In bold are East-West arroyos amenable to skating. The thinner lines are arroyos that while not suited for skaters have bike paths along them. The dashed line is Morris Ave, a  street with relatively low-traffic and a decent bike lane that can serve as a connector between two of the largest arroyo branches. 
+
+Note, this map only shows arroyos that I personally am aware of, there are likely many more skatable arroyos in the city not included in this map. This map also excludes the Arroyo Del Oso feeder off of Academy that is only skatable for a few blocks.
+
+
+
+## Skatable Arroyo Map with Elevation
+![Contours & Skatable Arroyos](C:/Users/sageg/Desktop/svoorhees-quant/Contour_pdf.jpg)
+
+## Arroyo Map with Elevation, Streets and Public Parks
+![Contours, Parks, Streets & Skatable Arroyos](C:/Users/sageg/Desktop/svoorhees-quant/Roads_Contours_Parks.jpg)
+
+## Map Details: 
+
+![Contours, Parks, Skatable Arroyos](C:/Users/sageg/Desktop/svoorhees-quant/Parks_and_Elevation.png)
+Decent Park-Coverage Along Routes. This GIS Park Layer does not include Open Space which dramatically under-counts the amount of park-area along and at the beginning of these routes. 
+
+![Streets & Skatable Arroyos, alt. Geo-Refferencing Points](C:/Users/sageg/Desktop/svoorhees-quant/ArroyoScreenshot.png)
+Another function of the arroyos is that they provide a alternative transit network in a city notorious for poor biking infrastructure and high bike fatalities, a good number of the arroyos have bike paths that run along them. They arroyos work decently as an east-west transit route, but there are few high-quality North-South lines. Except Tramway (which is along the mountains to the east) and the arroyo-channel route along I-25 (to the West). These routes are good, but are at the outer bounds of where someone generally needs to go. 
+
+## Skatable Arroyos with AMAFCA GIS maps
+
+![](C:/Users/sageg/Desktop/svoorhees-quant/Drainage_GIS_contours.png)
+Main take-away from this AMAFCA (Albuquerque Metropolitan Arroyo Flood Control Authority) GIS data. WHOAH. 
+
+1. I know for sure that some of these are not skatable (ie not paved, too shallow, too deep, not dry at bottom), but there are at a dozen spots on here that look SUPER PROMISING.  
+
+2. Whoah. This project would have been much easier if I had known this existed earlier and hadn't spend so much time squinting at google maps. 
+
+3. This is definitely not what the makers of this GIS data were intending, but I can't wait to use this map next time i'm in ABQ. 
+
+
+## AMAFCA's In-House Version of the skatability map
+Honestly, still pretty useful for our purposes
+
+![](C:/Users/sageg/Desktop/svoorhees-quant/Maintenance_Map.jpg)
+
+
+**Honorary Burqueño Sk8r: Nathan Apodaca**  <br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OtzVKUCZE5w" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+If you haven't followed this rags-to-riches tik-tok influencer story, now's your chance. <br>
+Long story short is that Apodaca's truck broke down on his way to work, he whipped out his long board that he kept in the cab for exactly this reason (you have to have a plan when the truck has over 300,000 miles) and continues on to work. This tik tok goes viral, Fleetwood Mac see's an uptick in their discography, folks start duplicating the video, and then ocean spray CEO figures out a way to get Ocean Spray in on the action by sending an employee to Apodoca's place with a brand new, cranberry red Nissan Truck, the bed of which is filled with cases of cranberry juice. <br>
+Honestly, a low-bar, but I think this has to be THE feel good story of 2020 <br>
+
+^If the above link doesn't work: https://www.youtube.com/OtzVKUCZE5w
+
+**I would like to thank Sk8r Reddit for some sources and a lost hour on Sunday afternoon:** 
+https://www.reddit.com/r/longboarding/comments/7ypo2f/awesome_hill_in_abq/?utm_source=share&utm_medium=web2x&context=3
+
+
+
+
