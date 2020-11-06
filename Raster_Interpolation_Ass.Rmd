@@ -1,0 +1,78 @@
+---
+title: "Raster_Interpolation"
+author: "Sage Grey"
+date: "11/2/2020"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(htmltools)
+library(htmlwidgets)
+library(raster)
+library(gstat)
+library(spatial)
+library(ggplot2)
+library(ggthemes)
+library(ggspatial)
+```
+
+
+
+
+## Download Tract Boundaries & Join DataFrames
+
+```{r}
+nm_tracts <- st_read("C:/Users/sageg/Desktop/svoorhees-quant/svoorhees-vis/Red Cross Data/NM_Tract/cb_2019_35_tract_500k.shp") 
+rc_risk_data <- st_read("C:/Users/sageg/Desktop/svoorhees-quant/svoorhees-vis/Red Cross Data/tabletracts.csv") %>%
+  filter(state == 35)
+
+nm_rc_risk_data <- rc_risk_data %>%
+left_join(nm_tracts, by =c("tract_geoid" = "GEOID"))%>%
+dplyr::select(tract, tract_geoid, county, risk, rank, geometry)
+
+```
+
+##
+```{r}
+ggplot(nm_rc_risk_data) +
+  geom_sf(color ="white", aes( fill= risk)) +
+  theme_map() 
+```
+
+
+
+
+```{r}
+NM_RISK <- leaflet(nm_rc_risk_data, options = leafletOptions(minZoom = 8, maxZoom = 18)) %>%
+  addProviderTiles(providers$Stamen.TonerLite) %>%
+  addPolygons(Color = "lightseagreen", stroke = FALSE, highlightOptions = highlightOptions(fillColor = risk, fillOpacity = 1),label =~describe) %>%
+  setMaxBounds( lng1 = -104,
+                lat1 = 34,
+                lng2 = -108,
+                lat2 = 36) %>%
+    addControl("Residential Areas: ADU Allowed", position = "topright")
+```
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
